@@ -1,13 +1,14 @@
-import { propEq } from 'ramda';
-import { of as taskOf } from 'folktale/concurrency/task';
-import { of as just, Maybe } from 'folktale/maybe';
+// import { propEq } from 'ramda';
+import { of as taskOf, fromPromised, task } from 'folktale/concurrency/task';
+import { of as just, Maybe, fromNullable } from 'folktale/maybe';
 import { Ok as ok } from 'folktale/result';
 import { Asset } from '@waves/data-entities';
 
-import { withStatementTimeout } from '../../../db/driver/utils';
-import { tap } from '../../../utils/tap';
-import { forEach, isEmpty } from '../../../utils/fp/maybeOps';
-import { AssetInfo } from '../../../types';
+// import { withStatementTimeout } from '../../../db/driver/utils';
+import {
+  // forEach,
+  isEmpty,
+} from '../../../utils/fp/maybeOps';
 
 import { CommonRepoDependencies } from '../..';
 
@@ -15,36 +16,48 @@ import { CommonRepoDependencies } from '../..';
 import {
   get as createGetResolver,
   mget as createMgetResolver,
+  search as createSearchResolver,
 } from '../../_common/createResolver';
-import { getData as getByIdPg } from '../../_common/presets/pg/getById/pg';
-import { getData as mgetByIdsPg } from '../../_common/presets/pg/mgetByIds/pg';
-import { validateResult } from '../../_common/presets/validation';
+// import { getData as mgetByIdsPg } from '../../_common/presets/pg/mgetByIds/pg';
+// import { validateResult } from '../../_common/presets/validation';
 import { transformResults as transformMgetResults } from '../../_common/presets/pg/mgetByIds/transformResult';
-import { searchPreset } from '../../_common/presets/pg/search';
+// import { searchPreset } from '../../_common/presets/pg/search';
 
 // validation
-import { result as resultSchema } from './schema';
+// import { result as resultSchema } from './schema';
 
 import { transformDbResponse } from './transformAsset';
-import * as sql from './sql';
+// import * as sql from './sql';
 import {
   AssetsCache,
-  AssetDbResponse,
+  // AssetDbResponse,
   AssetsRepo,
   AssetsGetRequest,
   AssetsMgetRequest,
   AssetsSearchRequest,
 } from './types';
-import { serialize, deserialize, Cursor } from './cursor';
+// import { serialize, deserialize, Cursor } from './cursor';
 export { create as createCache } from './cache';
+import { decode as base58Decode, encode as base58Encode } from 'bs58';
+import { waves } from './grpc';
+import { toDbError } from '../../../errorHandling';
 
 export default ({
-  drivers: { pg },
+  drivers: {
+    // pg
+  },
   emitEvent,
   cache,
-  timeouts,
+  // timeouts,
+  assetsGrpcService,
 }: CommonRepoDependencies & {
   cache: AssetsCache;
+} & {
+  assetsGrpcService: {
+    Get: waves.data.assets.Assets['get'];
+    GetBatch: waves.data.assets.Assets['getBatch'];
+    Search: waves.data.assets.Assets;
+  };
 }): AssetsRepo => {
   const SERVICE_NAME = {
     GET: 'assets.get',
@@ -56,23 +69,35 @@ export default ({
     get: createGetResolver<
       AssetsGetRequest,
       AssetsGetRequest,
-      AssetDbResponse,
+      waves.data.assets.AssetInfo,
       Asset
     >({
       transformInput: ok,
-      getData: req =>
-        cache.get(req).matchWith({
+      getData: request =>
+        cache.get(request).matchWith({
           Just: ({ value }) => taskOf(just(value)),
           Nothing: () =>
-            getByIdPg<AssetDbResponse, string>({
-              name: SERVICE_NAME.GET,
-              sql: sql.get,
-              pg: withStatementTimeout(pg, timeouts.get),
-            })(req).map(
-              tap(maybeResp => forEach(x => cache.set(req, x), maybeResp))
-            ),
+            fromPromised<Error, waves.data.assets.GetAssetResponse>(() =>
+              assetsGrpcService.Get.get(
+                waves.data.assets.GetAssetRequest.create({
+                  assetId: base58Decode(request),
+                })
+              )
+            )()
+              .map(res =>
+                fromNullable(res.assetInfo).map(assetInfoData => {
+                  const assetInfo = new waves.data.assets.AssetInfo(
+                    assetInfoData
+                  );
+                  cache.set(request, assetInfo);
+                  return assetInfo;
+                })
+              )
+              .mapRejected(e =>
+                toDbError({ service: SERVICE_NAME['GET'], request }, e)
+              ),
         }),
-      validateResult: validateResult(resultSchema, SERVICE_NAME.GET),
+      validateResult: ok,
       transformResult: res => res.map(transformDbResponse),
       emitEvent,
     }),
@@ -80,14 +105,14 @@ export default ({
     mget: createMgetResolver<
       AssetsMgetRequest,
       AssetsMgetRequest,
-      AssetDbResponse,
+      waves.data.assets.AssetInfo,
       Asset
     >({
       transformInput: ok,
       getData: request => {
-        let results: Array<Maybe<AssetDbResponse>> = request.map(x =>
-          cache.get(x)
-        );
+        let results: Array<Maybe<
+          waves.data.assets.AssetInfo
+        >> = request.map(x => cache.get(x));
 
         const notCachedIndexes = results.reduce<number[]>((acc, x, i) => {
           if (isEmpty(x)) acc.push(i);
@@ -96,46 +121,85 @@ export default ({
 
         const notCachedAssetIds = notCachedIndexes.map(i => request[i]);
 
-        return mgetByIdsPg<AssetDbResponse, string>({
-          name: SERVICE_NAME.MGET,
-          sql: sql.mget,
-          matchRequestResult: propEq('asset_id'),
-          pg: withStatementTimeout(pg, timeouts.mget),
-        })(notCachedAssetIds).map(fromDb => {
-          fromDb.forEach((assetInfo, index) =>
-            forEach(value => {
-              results[notCachedIndexes[index]] = assetInfo;
-              cache.set(notCachedAssetIds[index], value);
-            }, assetInfo)
+        const getBatchT = fromPromised<
+          Error,
+          waves.data.assets.GetAssetsBatchResponse
+        >(() =>
+          assetsGrpcService.GetBatch.getBatch(
+            waves.data.assets.GetAssetsBatchRequest.create({
+              assetIds: notCachedAssetIds.map(assetId => base58Decode(assetId)),
+            })
+          )
+        )().map(res => res.assetInfo);
+
+        return taskOf<Error, void>(undefined)
+          .chain<Error, waves.data.assets.IAssetInfoIfExists[]>(() =>
+            notCachedIndexes.length > 0 ? getBatchT : taskOf([])
+          )
+          .map(assetInfos => {
+            assetInfos.forEach((maybeAssetInfo, index) => {
+              const m = fromNullable(maybeAssetInfo.assetInfo);
+              return m.map(assetInfoData => {
+                const assetInfo = waves.data.assets.AssetInfo.create(
+                  assetInfoData
+                );
+                results[notCachedIndexes[index]] = just(assetInfo);
+                cache.set(notCachedAssetIds[index], assetInfo);
+              });
+            });
+            return results;
+          })
+          .mapRejected(e =>
+            toDbError({ service: SERVICE_NAME['GET'], request }, e)
           );
-          return results;
-        });
       },
-      validateResult: validateResult(resultSchema, SERVICE_NAME.MGET),
-      transformResult: transformMgetResults<
-        string[],
-        AssetDbResponse,
-        AssetInfo
-      >(transformDbResponse),
+      validateResult: ok,
+      transformResult: transformMgetResults(transformDbResponse),
       emitEvent,
     }),
 
-    search: searchPreset<
-      Cursor,
+    search: createSearchResolver<
       AssetsSearchRequest,
-      AssetDbResponse,
-      AssetInfo
+      AssetsSearchRequest,
+      waves.data.assets.AssetInfo,
+      Asset
     >({
-      name: SERVICE_NAME.SEARCH,
-      sql: sql.search,
-      resultSchema,
-      transformResult: transformDbResponse,
-      cursorSerialization: {
-        serialize,
-        deserialize,
+      transformInput: ok,
+      getData: request => {
+        const query = request.search || request.ticker;
+        if (typeof query === 'undefined') {
+          return taskOf([]);
+        }
+        const response: waves.data.assets.AssetInfo[] = [];
+        assetsGrpcService.search(
+          waves.data.assets.SearchAssetRequest.create({
+            query: query,
+          })
+        );
+
+        assetsGrpcService.on('data', data => {
+          response.push(data);
+          console.log('data', response);
+        });
+
+        return task(() => {
+          assetsGrpcService.on('end', () => {
+            console.log('done');
+            console.log(response);
+          });
+          response.forEach((assetInfoData, index) => {
+            const assetInfo = waves.data.assets.AssetInfo.create(assetInfoData);
+            cache.set(
+              base58Encode(Buffer.from(assetInfoData.assetId)),
+              assetInfo
+            );
+          });
+
+          return response;
+        });
       },
-    })({
-      pg: withStatementTimeout(pg, timeouts.search),
+      validateResult: ok,
+      transformResult: transformDbResponse as any,
       emitEvent,
     }),
   };

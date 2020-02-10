@@ -9,6 +9,7 @@ import { createPgDriver } from '../../../../db';
 import { loadConfig } from '../../../../loadConfig';
 import { EventEmitter } from 'events';
 import { SortOrder } from '../../../_common';
+import { service as assetsGrpcService } from '../impl';
 
 const options = loadConfig();
 const drivers = {
@@ -22,6 +23,7 @@ const repo = createRepo({
   drivers,
   emitEvent: () => () => null,
   cache,
+  assetsGrpcService,
   timeouts: {
     get: DEFAULT_TIMEOUT_IN_MS,
     mget: DEFAULT_TIMEOUT_IN_MS,

@@ -9,6 +9,7 @@ import createAssetsService, { AssetsService } from './assets';
 import createAssetsRepo, {
   createCache as createAssetsCache,
 } from './assets/repo';
+import * as assetsGrpcService from './assets/repo/impl';
 
 import createCandlesService, { CandlesService } from './candles';
 import createCandlesRepo from './candles/repo';
@@ -178,6 +179,7 @@ export default ({
       const assetsRepo = createAssetsRepo({
         ...commonDeps,
         cache: assetsCache,
+        assetsGrpcService: assetsGrpcService,
       });
       const assets = createAssetsService(assetsRepo);
 
