@@ -1,0 +1,60 @@
+syntax = "proto3";
+package waves.data.assets;
+option java_package = "com.wavesplatform.data.assets.protobuf";
+
+import "waves/common.proto";
+
+message AssetInfo {
+    bytes asset_id = 1;
+    string name = 2;
+    string description = 3;
+    int32 decimals = 4;
+    bool reissuable = 5;
+    int64 total_volume = 6;
+    bytes script = 7;
+    int64 sponsorship = 8;
+    bool nft = 9;
+}
+
+message WavesInfo {
+    int32 decimals = 1;
+    int64 total_volume = 2;
+}
+
+message GetAssetRequest {
+    bytes asset_id = 1;
+}
+
+message GetAssetResponse {
+    AssetInfo asset_info = 1;
+}
+
+message GetAssetsBatchRequest {
+    repeated bytes asset_ids = 1;
+}
+
+message AssetInfoIfExists {
+    AssetInfo asset_info = 1;
+}
+
+message GetAssetsBatchResponse {
+    repeated AssetInfoIfExists asset_info = 1;
+}
+
+message SearchAssetRequest {
+    string query = 1; // required
+
+    Pagination pagination = 100;
+}
+
+message SearchAssetResponse {
+    AssetInfo asset_info = 1;
+
+    bytes cursor = 100;
+}
+
+service Assets {
+    rpc Get(GetAssetRequest) returns (GetAssetResponse);
+    rpc GetBatch(GetAssetsBatchRequest) returns (GetAssetsBatchResponse);
+    rpc Search(SearchAssetRequest) returns (stream SearchAssetResponse);
+}

@@ -1,0 +1,37 @@
+syntax = "proto3";
+package waves.data;
+option java_package = "com.wavesplatform.data.protobuf";
+
+message ChangedByTransactionRequest {
+    bytes transaction_id = 1;
+}
+
+message BlockchainCoordinate {
+    oneof coordinate {
+        int32 height = 1;
+        int64 block_timestamp = 2;
+    }
+}
+
+message Pagination {
+    int32 limit = 1;
+    bytes after = 2;
+}
+
+message ValidationError {
+    string message = 1;
+    string field = 2;
+}
+
+message ParseError {
+    string message = 1;
+}
+
+message ServiceError {
+    string message = 1;
+//    int32 code = 2;
+}
+
+message Timeout {
+    string message = 1;
+}
