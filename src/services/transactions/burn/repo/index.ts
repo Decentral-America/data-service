@@ -1,7 +1,6 @@
 import { propEq } from 'ramda';
 
 import { withStatementTimeout } from '../../../../db/driver';
-import { TransactionInfo } from '../../../../types';
 import { CommonRepoDependencies } from '../../..';
 import { getByIdPreset } from '../../../_common/presets/pg/getById';
 import { mgetByIdsPreset } from '../../../_common/presets/pg/mgetByIds';
@@ -12,7 +11,12 @@ import { Cursor, serialize, deserialize } from '../../_common/cursor';
 import { result as resultSchema } from './schema';
 import * as sql from './sql';
 import transformTxInfo from './transformTxInfo';
-import { BurnTxsRepo, BurnTxDbResponse, BurnTxsSearchRequest } from './types';
+import {
+  BurnTxDbResponse,
+  BurnTransactionInfo,
+  BurnTxsSearchRequest,
+  BurnTxsRepo,
+} from './types';
 
 export default ({
   drivers: { pg },
@@ -45,7 +49,7 @@ export default ({
       Cursor,
       BurnTxsSearchRequest,
       BurnTxDbResponse,
-      TransactionInfo
+      BurnTransactionInfo
     >({
       name: 'transactions.burn.search',
       sql: sql.search,

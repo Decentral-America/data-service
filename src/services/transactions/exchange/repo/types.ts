@@ -1,7 +1,7 @@
-import { Repo, TransactionInfo } from '../../../../types';
+import { Repo } from '../../../../types';
 import { WithSortOrder, WithLimit } from '../../../_common';
 import { RequestWithCursor } from '../../../_common/pagination';
-import { CommonFilters, RawTx } from '../../_common/types';
+import { CommonFilters, RawTx, Tx } from '../../_common/types';
 import { BigNumber } from '@waves/data-entities';
 
 export type ExchangeTxDbResponse = RawTx & {
@@ -39,10 +39,34 @@ export type ExchangeTxDbResponse = RawTx & {
   o2_matcher_fee_asset_id: string;
 };
 
+type ExchangeOrder = {
+  id: string;
+  version: string;
+  type: string;
+  sender: string;
+  senderPublicKey: string;
+  signature: string;
+  matcherFee: BigNumber;
+  price: BigNumber;
+  amount: BigNumber;
+  timestamp: string;
+  expiration: string;
+  matcherFeeAssetId: string;
+};
+
+export type ExchangeTransactionInfo = Tx & {
+  priceAsset: string;
+  amountAsset: string;
+  price: BigNumber;
+  amount: BigNumber;
+  buyMatcherFee: BigNumber;
+  sellMatcherFee: BigNumber;
+  order1: ExchangeOrder;
+  order2: ExchangeOrder;
+};
+
 export type ExchangeTxsGetRequest = string;
-
 export type ExchangeTxsMgetRequest = string[];
-
 export type ExchangeTxsSearchRequest = RequestWithCursor<
   CommonFilters &
     WithSortOrder &
@@ -60,5 +84,5 @@ export type ExchangeTxsRepo = Repo<
   ExchangeTxsGetRequest,
   ExchangeTxsMgetRequest,
   ExchangeTxsSearchRequest,
-  TransactionInfo
+  ExchangeTransactionInfo
 >;

@@ -1,7 +1,7 @@
 import { fromNullable } from 'folktale/maybe';
 import * as LRU from 'lru-cache';
-import { decode as base58Decode } from 'bs58';
-import { waves } from './grpc';
+import { wavesAssetInfo } from './constants';
+import { waves } from './grpc/grpc';
 import { AssetsCache } from './types';
 
 export const create = (size: number, maxAgeMillis: number): AssetsCache => {
@@ -10,20 +10,7 @@ export const create = (size: number, maxAgeMillis: number): AssetsCache => {
     maxAge: maxAgeMillis,
   });
 
-  cache.set(
-    'WAVES',
-    new waves.data.assets.AssetInfo({
-      assetId: base58Decode('WAVES'),
-      name: 'WAVES',
-      description: 'Waves official token',
-      decimals: 8,
-      totalVolume: 100000000000,
-      reissuable: false,
-      sponsorship: null,
-      script: null,
-      nft: null,
-    })
-  );
+  cache.set('WAVES', wavesAssetInfo);
 
   return {
     has: key => {

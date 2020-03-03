@@ -14,11 +14,19 @@ message AssetInfo {
     bytes script = 7;
     int64 sponsorship = 8;
     bool nft = 9;
+
+    bytes origin_transaction_id = 10;
 }
 
 message WavesInfo {
     int32 decimals = 1;
     int64 total_volume = 2;
+}
+
+message GetWavesRequest {}
+
+message GetWavesResponse {
+    WavesInfo waves_info = 1;
 }
 
 message GetAssetRequest {
@@ -54,7 +62,8 @@ message SearchAssetResponse {
 }
 
 service Assets {
-    rpc Get(GetAssetRequest) returns (GetAssetResponse);
-    rpc GetBatch(GetAssetsBatchRequest) returns (GetAssetsBatchResponse);
-    rpc Search(SearchAssetRequest) returns (stream SearchAssetResponse);
+    rpc GetWaves(GetWavesRequest) returns (GetWavesResponse);
+    rpc GetAsset(GetAssetRequest) returns (GetAssetResponse);
+    rpc GetAssetsBatch(GetAssetsBatchRequest) returns (GetAssetsBatchResponse);
+    rpc SearchAsset(SearchAssetRequest) returns (stream SearchAssetResponse);
 }

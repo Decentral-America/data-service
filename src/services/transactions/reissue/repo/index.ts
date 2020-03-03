@@ -1,7 +1,6 @@
 import { propEq } from 'ramda';
 
 import { withStatementTimeout } from '../../../../db/driver';
-import { TransactionInfo } from '../../../../types';
 import { CommonRepoDependencies } from '../../..';
 import { getByIdPreset } from '../../../_common/presets/pg/getById';
 import { mgetByIdsPreset } from '../../../_common/presets/pg/mgetByIds';
@@ -13,9 +12,10 @@ import { result as resultSchema } from './schema';
 import * as sql from './sql';
 import * as transformTxInfo from './transformTxInfo';
 import {
-  ReissueTxsRepo,
-  ReissueTxsSearchRequest,
   ReissueTxDbResponse,
+  ReissueTransactionInfo,
+  ReissueTxsSearchRequest,
+  ReissueTxsRepo,
 } from './types';
 
 export default ({
@@ -49,7 +49,7 @@ export default ({
       Cursor,
       ReissueTxsSearchRequest,
       ReissueTxDbResponse,
-      TransactionInfo
+      ReissueTransactionInfo
     >({
       name: 'transactions.reissue.search',
       sql: sql.search,

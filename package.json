@@ -24,7 +24,9 @@
     "test:i": "export $(cat variables.env | xargs) && jest --runInBand --detectOpenHandles --config=config/jest.config.integration.json",
     "test:is": "export $(cat variables.stage.env | xargs) && jest --runInBand --detectOpenHandles --config=config/jest.config.integration.json",
     "test:isn": "export $(cat variables.stagenet.env | xargs) && jest --runInBand --detectOpenHandles --config=config/jest.config.integration.json",
-    "test:it": "export $(cat variables.testnet.env | xargs) && jest --runInBand --detectOpenHandles --config=config/jest.config.integration.testnet.json"
+    "test:it": "export $(cat variables.testnet.env | xargs) && jest --runInBand --detectOpenHandles --config=config/jest.config.integration.testnet.json",
+    "grpc:build": "npm run grpc:build:assets",
+    "grpc:build:assets": "./node_modules/.bin/pbjs -t static-module --force-long -w commonjs -o ./src/services/assets/repo/grpc/grpc.js ./src/services/assets/repo/proto/assets.proto && ./node_modules/.bin/pbts -o ./src/services/assets/repo/grpc/grpc.d.ts ./src/services/assets/repo/grpc/grpc.js"
   },
   "devDependencies": {
     "@types/bs58": "^4.0.1",
@@ -54,7 +56,7 @@
     "bs58": "^4.0.1",
     "chalk": "^2.3.2",
     "check-env": "^1.3.0",
-    "folktale": "^2.1.0",
+    "folktale": "^2.3.2",
     "grpc": "^1.24.2",
     "joi": "^13.2.0",
     "json-colorizer": "^1.1.1",

@@ -1,41 +1,7 @@
-import { Maybe } from 'folktale/maybe';
-import {
-  Service,
-  SearchedItems,
-  ServiceGetRequest,
-  ServiceMgetRequest,
-} from '../../../types';
-import { WithDecimalsFormat } from '../../types';
-import {
-  MassTransferTxsRepo,
-  MassTransferTxsGetRequest,
-  MassTransferTxsMgetRequest,
-  MassTransferTxsSearchRequest,
-} from './repo/types';
-import { TransactionInfo } from '../../../types';
+import { MassTransferTxsRepo } from './repo/types';
+import { MassTransferTxsService } from './types';
 
-export type MassTransferTxsServiceGetRequest = ServiceGetRequest<
-  MassTransferTxsGetRequest
->;
-export type MassTransferTxsServiceMgetRequest = ServiceMgetRequest<
-  MassTransferTxsMgetRequest
->;
-export type MassTransferTxsServiceSearchRequest = MassTransferTxsSearchRequest;
-
-export type MassTransferTxsService = {
-  get: Service<
-    MassTransferTxsServiceGetRequest & WithDecimalsFormat,
-    Maybe<TransactionInfo>
-  >;
-  mget: Service<
-    MassTransferTxsServiceMgetRequest & WithDecimalsFormat,
-    Maybe<TransactionInfo>[]
-  >;
-  search: Service<
-    MassTransferTxsServiceSearchRequest & WithDecimalsFormat,
-    SearchedItems<TransactionInfo>
-  >;
-};
+export * from './types';
 
 export default (repo: MassTransferTxsRepo): MassTransferTxsService => ({
   get: req => repo.get(req.id),

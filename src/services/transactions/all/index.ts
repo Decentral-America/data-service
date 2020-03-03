@@ -34,7 +34,7 @@ import {
   AllTxsMgetRequest,
   AllTxsSearchRequest,
 } from './repo/types';
-import { WithDecimalsFormat, DecimalsFormat } from '../../types';
+import { WithDecimalsFormat } from '../../types';
 import { collect } from '../../../utils/collection';
 
 type AllTxsServiceDep = {
@@ -90,7 +90,7 @@ export default (repo: AllTxsRepo) => (
           Just: ({ value }) => {
             return txsServices[value.type as keyof AllTxsServiceDep].get({
               id: value.id,
-              decimalsFormat: DecimalsFormat.Long,
+              decimalsFormat: req.decimalsFormat,
             });
           },
           Nothing: () => taskOf(emptyOf()),
@@ -107,7 +107,7 @@ export default (repo: AllTxsRepo) => (
               Just: ({ value }) => {
                 return txsServices[value.type as keyof AllTxsServiceDep].get({
                   id: value.id,
-                  decimalsFormat: DecimalsFormat.Long,
+                  decimalsFormat: req.decimalsFormat,
                 });
               },
               Nothing: () => taskOf(emptyOf()),

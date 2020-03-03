@@ -65,8 +65,8 @@ const query = (pairs: AssetIdsPair[], matcher: string): string =>
       amount_asset_id: 'aa.asset_id',
       price_asset_id: 'pa.asset_id',
     })
-    .join({ aa: 'assets' }, 'aa.uid', 't.amount_asset_uid')
-    .join({ pa: 'assets' }, 'pa.uid', 't.price_asset_uid')
+    .join({ aa: 'assets_data' }, 'aa.uid', 't.amount_asset_uid')
+    .join({ pa: 'assets_data' }, 'pa.uid', 't.price_asset_uid')
     .leftJoin(
       { matcher_addr: 'addresses' },
       'matcher_addr.uid',
@@ -93,7 +93,7 @@ const searchAssets = (
   // will be used on searchable_asset_name search
   const cleanedQuery = escapeForTsQuery(query);
   return qb.distinct('asset_uid').from(function(this: knex.QueryBuilder) {
-    this.table({ [tableAlias]: 'assets' })
+    this.table({ [tableAlias]: 'assets_data' })
       .column({ asset_uid: `${tableAlias}.uid` })
       .where(`${tableAlias}.asset_id`, query)
       .orWhere(
@@ -121,7 +121,7 @@ const searchAssets = (
             : q
         )(
           q
-            .from({ [`${tableAlias}3`]: 'assets' })
+            .from({ [`${tableAlias}3`]: 'assets_data' })
             .column({ asset_uid: `${tableAlias}3.uid` })
             .where(
               `${tableAlias}3.asset_name`,
@@ -149,8 +149,8 @@ export const search = (req: PairsSearchRequest): string => {
       amount_asset_id: 'aa.asset_id',
       price_asset_id: 'pa.asset_id',
     })
-    .join({ aa: 'assets' }, 'aa.uid', 't.amount_asset_uid')
-    .join({ pa: 'assets' }, 'pa.uid', 't.price_asset_uid')
+    .join({ aa: 'assets_data' }, 'aa.uid', 't.amount_asset_uid')
+    .join({ pa: 'assets_data' }, 'pa.uid', 't.price_asset_uid')
     .orderByRaw('volume_waves desc NULLS LAST')
     .whereIn('matcher_address_uid', function() {
       this.select('uid')
@@ -224,8 +224,8 @@ export const search = (req: PairsSearchRequest): string => {
               'reverse_cte.price_asset_uid': 't1.amount_asset_uid',
             }
           )
-          .join({ aa: 'assets' }, 'aa.uid', 't1.amount_asset_uid')
-          .join({ pa: 'assets' }, 'pa.uid', 't1.price_asset_uid')
+          .join({ aa: 'assets_data' }, 'aa.uid', 't1.amount_asset_uid')
+          .join({ pa: 'assets_data' }, 'pa.uid', 't1.price_asset_uid')
           .whereIn('matcher_address_uid', function() {
             this.select('uid')
               .from('addresses')

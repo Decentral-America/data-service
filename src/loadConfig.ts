@@ -26,12 +26,18 @@ export type MatcherConfig = {
   };
 };
 
+export type GrpcConfig = {
+  serverUrl: string;
+  network: string;
+  connectionTimeout: number;
+};
+
 export type DefaultConfig = PostgresConfig & ServerConfig & LoggerConfig;
 
 export type DataServiceConfig = PostgresConfig &
   ServerConfig &
   LoggerConfig &
-  MatcherConfig & {
+  MatcherConfig & { grpc: GrpcConfig } & {
     defaultTimeout: number;
   };
 
@@ -60,7 +66,7 @@ export const loadDefaultConfig = (): DefaultConfig => {
   };
 };
 
-const envVariables = ['DEFAULT_MATCHER'];
+const envVariables = ['DEFAULT_MATCHER', 'GRPC_SERVER_URL', 'NETWORK'];
 
 const load = (): DataServiceConfig => {
   // assert all necessary env vars are set
@@ -86,6 +92,14 @@ const load = (): DataServiceConfig => {
     defaultTimeout: process.env.DEFAULT_TIMEOUT
       ? parseInt(process.env.DEFAULT_TIMEOUT)
       : 30000,
+
+    grpc: {
+      serverUrl: process.env.GRPC_SERVER_URL as string,
+      network: process.env.NETWORK as string,
+      connectionTimeout: process.env.GRPC_CONNECTION_TIMEOUT
+        ? parseInt(process.env.GRPC_CONNECTION_TIMEOUT)
+        : 30000,
+    },
   };
 };
 

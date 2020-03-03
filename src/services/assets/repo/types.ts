@@ -1,8 +1,7 @@
-import { Asset } from '@waves/data-entities';
 import { CacheSync, Repo, XOR } from '../../../types';
 import { WithSortOrder, WithLimit } from '../../_common';
 import { RequestWithCursor } from '../../_common/pagination';
-import { waves } from './grpc';
+import { waves } from './grpc/grpc';
 
 export type AssetsCache = CacheSync<string, waves.data.assets.AssetInfo>;
 
@@ -26,7 +25,7 @@ export type AssetsRepo = Repo<
   AssetsGetRequest,
   AssetsMgetRequest,
   AssetsSearchRequest,
-  Asset
+  waves.data.assets.AssetInfo
 >;
 
 export type AssetDbResponse = {

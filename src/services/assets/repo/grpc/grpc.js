@@ -1,20 +1,22 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
-import * as $protobuf from "protobufjs/minimal";
+"use strict";
+
+var $protobuf = require("protobufjs/minimal");
 
 // Common aliases
-const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
+var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
 
 // Exported root namespace
-const $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
+var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
 
-export const waves = $root.waves = (() => {
+$root.waves = (function() {
 
     /**
      * Namespace waves.
      * @exports waves
      * @namespace
      */
-    const waves = {};
+    var waves = {};
 
     waves.data = (function() {
 
@@ -23,7 +25,7 @@ export const waves = $root.waves = (() => {
          * @memberof waves
          * @namespace
          */
-        const data = {};
+        var data = {};
 
         data.assets = (function() {
 
@@ -32,7 +34,7 @@ export const waves = $root.waves = (() => {
              * @memberof waves.data
              * @namespace
              */
-            const assets = {};
+            var assets = {};
 
             assets.AssetInfo = (function() {
 
@@ -45,10 +47,11 @@ export const waves = $root.waves = (() => {
                  * @property {string|null} [description] AssetInfo description
                  * @property {number|null} [decimals] AssetInfo decimals
                  * @property {boolean|null} [reissuable] AssetInfo reissuable
-                 * @property {number|Long|null} [totalVolume] AssetInfo totalVolume
+                 * @property {Long|null} [totalVolume] AssetInfo totalVolume
                  * @property {Uint8Array|null} [script] AssetInfo script
-                 * @property {number|Long|null} [sponsorship] AssetInfo sponsorship
+                 * @property {Long|null} [sponsorship] AssetInfo sponsorship
                  * @property {boolean|null} [nft] AssetInfo nft
+                 * @property {Uint8Array|null} [originTransactionId] AssetInfo originTransactionId
                  */
 
                 /**
@@ -61,7 +64,7 @@ export const waves = $root.waves = (() => {
                  */
                 function AssetInfo(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -108,7 +111,7 @@ export const waves = $root.waves = (() => {
 
                 /**
                  * AssetInfo totalVolume.
-                 * @member {number|Long} totalVolume
+                 * @member {Long} totalVolume
                  * @memberof waves.data.assets.AssetInfo
                  * @instance
                  */
@@ -124,7 +127,7 @@ export const waves = $root.waves = (() => {
 
                 /**
                  * AssetInfo sponsorship.
-                 * @member {number|Long} sponsorship
+                 * @member {Long} sponsorship
                  * @memberof waves.data.assets.AssetInfo
                  * @instance
                  */
@@ -137,6 +140,14 @@ export const waves = $root.waves = (() => {
                  * @instance
                  */
                 AssetInfo.prototype.nft = false;
+
+                /**
+                 * AssetInfo originTransactionId.
+                 * @member {Uint8Array} originTransactionId
+                 * @memberof waves.data.assets.AssetInfo
+                 * @instance
+                 */
+                AssetInfo.prototype.originTransactionId = $util.newBuffer([]);
 
                 /**
                  * Creates a new AssetInfo instance using the specified properties.
@@ -180,6 +191,8 @@ export const waves = $root.waves = (() => {
                         writer.uint32(/* id 8, wireType 0 =*/64).int64(message.sponsorship);
                     if (message.nft != null && message.hasOwnProperty("nft"))
                         writer.uint32(/* id 9, wireType 0 =*/72).bool(message.nft);
+                    if (message.originTransactionId != null && message.hasOwnProperty("originTransactionId"))
+                        writer.uint32(/* id 10, wireType 2 =*/82).bytes(message.originTransactionId);
                     return writer;
                 };
 
@@ -210,9 +223,9 @@ export const waves = $root.waves = (() => {
                 AssetInfo.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.AssetInfo();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.AssetInfo();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.assetId = reader.bytes();
@@ -240,6 +253,9 @@ export const waves = $root.waves = (() => {
                             break;
                         case 9:
                             message.nft = reader.bool();
+                            break;
+                        case 10:
+                            message.originTransactionId = reader.bytes();
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -303,6 +319,9 @@ export const waves = $root.waves = (() => {
                     if (message.nft != null && message.hasOwnProperty("nft"))
                         if (typeof message.nft !== "boolean")
                             return "nft: boolean expected";
+                    if (message.originTransactionId != null && message.hasOwnProperty("originTransactionId"))
+                        if (!(message.originTransactionId && typeof message.originTransactionId.length === "number" || $util.isString(message.originTransactionId)))
+                            return "originTransactionId: buffer expected";
                     return null;
                 };
 
@@ -317,7 +336,7 @@ export const waves = $root.waves = (() => {
                 AssetInfo.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.AssetInfo)
                         return object;
-                    let message = new $root.waves.data.assets.AssetInfo();
+                    var message = new $root.waves.data.assets.AssetInfo();
                     if (object.assetId != null)
                         if (typeof object.assetId === "string")
                             $util.base64.decode(object.assetId, message.assetId = $util.newBuffer($util.base64.length(object.assetId)), 0);
@@ -356,6 +375,11 @@ export const waves = $root.waves = (() => {
                             message.sponsorship = new $util.LongBits(object.sponsorship.low >>> 0, object.sponsorship.high >>> 0).toNumber();
                     if (object.nft != null)
                         message.nft = Boolean(object.nft);
+                    if (object.originTransactionId != null)
+                        if (typeof object.originTransactionId === "string")
+                            $util.base64.decode(object.originTransactionId, message.originTransactionId = $util.newBuffer($util.base64.length(object.originTransactionId)), 0);
+                        else if (object.originTransactionId.length)
+                            message.originTransactionId = object.originTransactionId;
                     return message;
                 };
 
@@ -371,7 +395,7 @@ export const waves = $root.waves = (() => {
                 AssetInfo.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults) {
                         if (options.bytes === String)
                             object.assetId = "";
@@ -385,7 +409,7 @@ export const waves = $root.waves = (() => {
                         object.decimals = 0;
                         object.reissuable = false;
                         if ($util.Long) {
-                            let long = new $util.Long(0, 0, false);
+                            var long = new $util.Long(0, 0, false);
                             object.totalVolume = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                         } else
                             object.totalVolume = options.longs === String ? "0" : 0;
@@ -397,11 +421,18 @@ export const waves = $root.waves = (() => {
                                 object.script = $util.newBuffer(object.script);
                         }
                         if ($util.Long) {
-                            let long = new $util.Long(0, 0, false);
+                            var long = new $util.Long(0, 0, false);
                             object.sponsorship = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                         } else
                             object.sponsorship = options.longs === String ? "0" : 0;
                         object.nft = false;
+                        if (options.bytes === String)
+                            object.originTransactionId = "";
+                        else {
+                            object.originTransactionId = [];
+                            if (options.bytes !== Array)
+                                object.originTransactionId = $util.newBuffer(object.originTransactionId);
+                        }
                     }
                     if (message.assetId != null && message.hasOwnProperty("assetId"))
                         object.assetId = options.bytes === String ? $util.base64.encode(message.assetId, 0, message.assetId.length) : options.bytes === Array ? Array.prototype.slice.call(message.assetId) : message.assetId;
@@ -427,6 +458,8 @@ export const waves = $root.waves = (() => {
                             object.sponsorship = options.longs === String ? $util.Long.prototype.toString.call(message.sponsorship) : options.longs === Number ? new $util.LongBits(message.sponsorship.low >>> 0, message.sponsorship.high >>> 0).toNumber() : message.sponsorship;
                     if (message.nft != null && message.hasOwnProperty("nft"))
                         object.nft = message.nft;
+                    if (message.originTransactionId != null && message.hasOwnProperty("originTransactionId"))
+                        object.originTransactionId = options.bytes === String ? $util.base64.encode(message.originTransactionId, 0, message.originTransactionId.length) : options.bytes === Array ? Array.prototype.slice.call(message.originTransactionId) : message.originTransactionId;
                     return object;
                 };
 
@@ -451,7 +484,7 @@ export const waves = $root.waves = (() => {
                  * @memberof waves.data.assets
                  * @interface IWavesInfo
                  * @property {number|null} [decimals] WavesInfo decimals
-                 * @property {number|Long|null} [totalVolume] WavesInfo totalVolume
+                 * @property {Long|null} [totalVolume] WavesInfo totalVolume
                  */
 
                 /**
@@ -464,7 +497,7 @@ export const waves = $root.waves = (() => {
                  */
                 function WavesInfo(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -479,7 +512,7 @@ export const waves = $root.waves = (() => {
 
                 /**
                  * WavesInfo totalVolume.
-                 * @member {number|Long} totalVolume
+                 * @member {Long} totalVolume
                  * @memberof waves.data.assets.WavesInfo
                  * @instance
                  */
@@ -543,9 +576,9 @@ export const waves = $root.waves = (() => {
                 WavesInfo.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.WavesInfo();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.WavesInfo();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.decimals = reader.int32();
@@ -608,7 +641,7 @@ export const waves = $root.waves = (() => {
                 WavesInfo.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.WavesInfo)
                         return object;
-                    let message = new $root.waves.data.assets.WavesInfo();
+                    var message = new $root.waves.data.assets.WavesInfo();
                     if (object.decimals != null)
                         message.decimals = object.decimals | 0;
                     if (object.totalVolume != null)
@@ -635,11 +668,11 @@ export const waves = $root.waves = (() => {
                 WavesInfo.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults) {
                         object.decimals = 0;
                         if ($util.Long) {
-                            let long = new $util.Long(0, 0, false);
+                            var long = new $util.Long(0, 0, false);
                             object.totalVolume = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                         } else
                             object.totalVolume = options.longs === String ? "0" : 0;
@@ -668,6 +701,358 @@ export const waves = $root.waves = (() => {
                 return WavesInfo;
             })();
 
+            assets.GetWavesRequest = (function() {
+
+                /**
+                 * Properties of a GetWavesRequest.
+                 * @memberof waves.data.assets
+                 * @interface IGetWavesRequest
+                 */
+
+                /**
+                 * Constructs a new GetWavesRequest.
+                 * @memberof waves.data.assets
+                 * @classdesc Represents a GetWavesRequest.
+                 * @implements IGetWavesRequest
+                 * @constructor
+                 * @param {waves.data.assets.IGetWavesRequest=} [properties] Properties to set
+                 */
+                function GetWavesRequest(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Creates a new GetWavesRequest instance using the specified properties.
+                 * @function create
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {waves.data.assets.IGetWavesRequest=} [properties] Properties to set
+                 * @returns {waves.data.assets.GetWavesRequest} GetWavesRequest instance
+                 */
+                GetWavesRequest.create = function create(properties) {
+                    return new GetWavesRequest(properties);
+                };
+
+                /**
+                 * Encodes the specified GetWavesRequest message. Does not implicitly {@link waves.data.assets.GetWavesRequest.verify|verify} messages.
+                 * @function encode
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {waves.data.assets.IGetWavesRequest} message GetWavesRequest message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                GetWavesRequest.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified GetWavesRequest message, length delimited. Does not implicitly {@link waves.data.assets.GetWavesRequest.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {waves.data.assets.IGetWavesRequest} message GetWavesRequest message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                GetWavesRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a GetWavesRequest message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {waves.data.assets.GetWavesRequest} GetWavesRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                GetWavesRequest.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetWavesRequest();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a GetWavesRequest message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {waves.data.assets.GetWavesRequest} GetWavesRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                GetWavesRequest.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a GetWavesRequest message.
+                 * @function verify
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                GetWavesRequest.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a GetWavesRequest message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {waves.data.assets.GetWavesRequest} GetWavesRequest
+                 */
+                GetWavesRequest.fromObject = function fromObject(object) {
+                    if (object instanceof $root.waves.data.assets.GetWavesRequest)
+                        return object;
+                    return new $root.waves.data.assets.GetWavesRequest();
+                };
+
+                /**
+                 * Creates a plain object from a GetWavesRequest message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @static
+                 * @param {waves.data.assets.GetWavesRequest} message GetWavesRequest
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                GetWavesRequest.toObject = function toObject() {
+                    return {};
+                };
+
+                /**
+                 * Converts this GetWavesRequest to JSON.
+                 * @function toJSON
+                 * @memberof waves.data.assets.GetWavesRequest
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                GetWavesRequest.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                return GetWavesRequest;
+            })();
+
+            assets.GetWavesResponse = (function() {
+
+                /**
+                 * Properties of a GetWavesResponse.
+                 * @memberof waves.data.assets
+                 * @interface IGetWavesResponse
+                 * @property {waves.data.assets.IWavesInfo|null} [wavesInfo] GetWavesResponse wavesInfo
+                 */
+
+                /**
+                 * Constructs a new GetWavesResponse.
+                 * @memberof waves.data.assets
+                 * @classdesc Represents a GetWavesResponse.
+                 * @implements IGetWavesResponse
+                 * @constructor
+                 * @param {waves.data.assets.IGetWavesResponse=} [properties] Properties to set
+                 */
+                function GetWavesResponse(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * GetWavesResponse wavesInfo.
+                 * @member {waves.data.assets.IWavesInfo|null|undefined} wavesInfo
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @instance
+                 */
+                GetWavesResponse.prototype.wavesInfo = null;
+
+                /**
+                 * Creates a new GetWavesResponse instance using the specified properties.
+                 * @function create
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {waves.data.assets.IGetWavesResponse=} [properties] Properties to set
+                 * @returns {waves.data.assets.GetWavesResponse} GetWavesResponse instance
+                 */
+                GetWavesResponse.create = function create(properties) {
+                    return new GetWavesResponse(properties);
+                };
+
+                /**
+                 * Encodes the specified GetWavesResponse message. Does not implicitly {@link waves.data.assets.GetWavesResponse.verify|verify} messages.
+                 * @function encode
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {waves.data.assets.IGetWavesResponse} message GetWavesResponse message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                GetWavesResponse.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.wavesInfo != null && message.hasOwnProperty("wavesInfo"))
+                        $root.waves.data.assets.WavesInfo.encode(message.wavesInfo, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified GetWavesResponse message, length delimited. Does not implicitly {@link waves.data.assets.GetWavesResponse.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {waves.data.assets.IGetWavesResponse} message GetWavesResponse message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                GetWavesResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a GetWavesResponse message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {waves.data.assets.GetWavesResponse} GetWavesResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                GetWavesResponse.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetWavesResponse();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.wavesInfo = $root.waves.data.assets.WavesInfo.decode(reader, reader.uint32());
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a GetWavesResponse message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {waves.data.assets.GetWavesResponse} GetWavesResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                GetWavesResponse.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a GetWavesResponse message.
+                 * @function verify
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                GetWavesResponse.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.wavesInfo != null && message.hasOwnProperty("wavesInfo")) {
+                        var error = $root.waves.data.assets.WavesInfo.verify(message.wavesInfo);
+                        if (error)
+                            return "wavesInfo." + error;
+                    }
+                    return null;
+                };
+
+                /**
+                 * Creates a GetWavesResponse message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {waves.data.assets.GetWavesResponse} GetWavesResponse
+                 */
+                GetWavesResponse.fromObject = function fromObject(object) {
+                    if (object instanceof $root.waves.data.assets.GetWavesResponse)
+                        return object;
+                    var message = new $root.waves.data.assets.GetWavesResponse();
+                    if (object.wavesInfo != null) {
+                        if (typeof object.wavesInfo !== "object")
+                            throw TypeError(".waves.data.assets.GetWavesResponse.wavesInfo: object expected");
+                        message.wavesInfo = $root.waves.data.assets.WavesInfo.fromObject(object.wavesInfo);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a GetWavesResponse message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @static
+                 * @param {waves.data.assets.GetWavesResponse} message GetWavesResponse
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                GetWavesResponse.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.defaults)
+                        object.wavesInfo = null;
+                    if (message.wavesInfo != null && message.hasOwnProperty("wavesInfo"))
+                        object.wavesInfo = $root.waves.data.assets.WavesInfo.toObject(message.wavesInfo, options);
+                    return object;
+                };
+
+                /**
+                 * Converts this GetWavesResponse to JSON.
+                 * @function toJSON
+                 * @memberof waves.data.assets.GetWavesResponse
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                GetWavesResponse.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                return GetWavesResponse;
+            })();
+
             assets.GetAssetRequest = (function() {
 
                 /**
@@ -687,7 +1072,7 @@ export const waves = $root.waves = (() => {
                  */
                 function GetAssetRequest(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -756,9 +1141,9 @@ export const waves = $root.waves = (() => {
                 GetAssetRequest.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetRequest();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetRequest();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.assetId = reader.bytes();
@@ -815,7 +1200,7 @@ export const waves = $root.waves = (() => {
                 GetAssetRequest.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.GetAssetRequest)
                         return object;
-                    let message = new $root.waves.data.assets.GetAssetRequest();
+                    var message = new $root.waves.data.assets.GetAssetRequest();
                     if (object.assetId != null)
                         if (typeof object.assetId === "string")
                             $util.base64.decode(object.assetId, message.assetId = $util.newBuffer($util.base64.length(object.assetId)), 0);
@@ -836,7 +1221,7 @@ export const waves = $root.waves = (() => {
                 GetAssetRequest.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults)
                         if (options.bytes === String)
                             object.assetId = "";
@@ -883,7 +1268,7 @@ export const waves = $root.waves = (() => {
                  */
                 function GetAssetResponse(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -952,9 +1337,9 @@ export const waves = $root.waves = (() => {
                 GetAssetResponse.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetResponse();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetResponse();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.assetInfo = $root.waves.data.assets.AssetInfo.decode(reader, reader.uint32());
@@ -995,7 +1380,7 @@ export const waves = $root.waves = (() => {
                     if (typeof message !== "object" || message === null)
                         return "object expected";
                     if (message.assetInfo != null && message.hasOwnProperty("assetInfo")) {
-                        let error = $root.waves.data.assets.AssetInfo.verify(message.assetInfo);
+                        var error = $root.waves.data.assets.AssetInfo.verify(message.assetInfo);
                         if (error)
                             return "assetInfo." + error;
                     }
@@ -1013,7 +1398,7 @@ export const waves = $root.waves = (() => {
                 GetAssetResponse.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.GetAssetResponse)
                         return object;
-                    let message = new $root.waves.data.assets.GetAssetResponse();
+                    var message = new $root.waves.data.assets.GetAssetResponse();
                     if (object.assetInfo != null) {
                         if (typeof object.assetInfo !== "object")
                             throw TypeError(".waves.data.assets.GetAssetResponse.assetInfo: object expected");
@@ -1034,7 +1419,7 @@ export const waves = $root.waves = (() => {
                 GetAssetResponse.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults)
                         object.assetInfo = null;
                     if (message.assetInfo != null && message.hasOwnProperty("assetInfo"))
@@ -1076,7 +1461,7 @@ export const waves = $root.waves = (() => {
                 function GetAssetsBatchRequest(properties) {
                     this.assetIds = [];
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -1114,7 +1499,7 @@ export const waves = $root.waves = (() => {
                     if (!writer)
                         writer = $Writer.create();
                     if (message.assetIds != null && message.assetIds.length)
-                        for (let i = 0; i < message.assetIds.length; ++i)
+                        for (var i = 0; i < message.assetIds.length; ++i)
                             writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.assetIds[i]);
                     return writer;
                 };
@@ -1146,9 +1531,9 @@ export const waves = $root.waves = (() => {
                 GetAssetsBatchRequest.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetsBatchRequest();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetsBatchRequest();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             if (!(message.assetIds && message.assetIds.length))
@@ -1193,7 +1578,7 @@ export const waves = $root.waves = (() => {
                     if (message.assetIds != null && message.hasOwnProperty("assetIds")) {
                         if (!Array.isArray(message.assetIds))
                             return "assetIds: array expected";
-                        for (let i = 0; i < message.assetIds.length; ++i)
+                        for (var i = 0; i < message.assetIds.length; ++i)
                             if (!(message.assetIds[i] && typeof message.assetIds[i].length === "number" || $util.isString(message.assetIds[i])))
                                 return "assetIds: buffer[] expected";
                     }
@@ -1211,12 +1596,12 @@ export const waves = $root.waves = (() => {
                 GetAssetsBatchRequest.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.GetAssetsBatchRequest)
                         return object;
-                    let message = new $root.waves.data.assets.GetAssetsBatchRequest();
+                    var message = new $root.waves.data.assets.GetAssetsBatchRequest();
                     if (object.assetIds) {
                         if (!Array.isArray(object.assetIds))
                             throw TypeError(".waves.data.assets.GetAssetsBatchRequest.assetIds: array expected");
                         message.assetIds = [];
-                        for (let i = 0; i < object.assetIds.length; ++i)
+                        for (var i = 0; i < object.assetIds.length; ++i)
                             if (typeof object.assetIds[i] === "string")
                                 $util.base64.decode(object.assetIds[i], message.assetIds[i] = $util.newBuffer($util.base64.length(object.assetIds[i])), 0);
                             else if (object.assetIds[i].length)
@@ -1237,12 +1622,12 @@ export const waves = $root.waves = (() => {
                 GetAssetsBatchRequest.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.arrays || options.defaults)
                         object.assetIds = [];
                     if (message.assetIds && message.assetIds.length) {
                         object.assetIds = [];
-                        for (let j = 0; j < message.assetIds.length; ++j)
+                        for (var j = 0; j < message.assetIds.length; ++j)
                             object.assetIds[j] = options.bytes === String ? $util.base64.encode(message.assetIds[j], 0, message.assetIds[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.assetIds[j]) : message.assetIds[j];
                     }
                     return object;
@@ -1281,7 +1666,7 @@ export const waves = $root.waves = (() => {
                  */
                 function AssetInfoIfExists(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -1350,9 +1735,9 @@ export const waves = $root.waves = (() => {
                 AssetInfoIfExists.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.AssetInfoIfExists();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.AssetInfoIfExists();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.assetInfo = $root.waves.data.assets.AssetInfo.decode(reader, reader.uint32());
@@ -1393,7 +1778,7 @@ export const waves = $root.waves = (() => {
                     if (typeof message !== "object" || message === null)
                         return "object expected";
                     if (message.assetInfo != null && message.hasOwnProperty("assetInfo")) {
-                        let error = $root.waves.data.assets.AssetInfo.verify(message.assetInfo);
+                        var error = $root.waves.data.assets.AssetInfo.verify(message.assetInfo);
                         if (error)
                             return "assetInfo." + error;
                     }
@@ -1411,7 +1796,7 @@ export const waves = $root.waves = (() => {
                 AssetInfoIfExists.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.AssetInfoIfExists)
                         return object;
-                    let message = new $root.waves.data.assets.AssetInfoIfExists();
+                    var message = new $root.waves.data.assets.AssetInfoIfExists();
                     if (object.assetInfo != null) {
                         if (typeof object.assetInfo !== "object")
                             throw TypeError(".waves.data.assets.AssetInfoIfExists.assetInfo: object expected");
@@ -1432,7 +1817,7 @@ export const waves = $root.waves = (() => {
                 AssetInfoIfExists.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults)
                         object.assetInfo = null;
                     if (message.assetInfo != null && message.hasOwnProperty("assetInfo"))
@@ -1474,7 +1859,7 @@ export const waves = $root.waves = (() => {
                 function GetAssetsBatchResponse(properties) {
                     this.assetInfo = [];
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -1512,7 +1897,7 @@ export const waves = $root.waves = (() => {
                     if (!writer)
                         writer = $Writer.create();
                     if (message.assetInfo != null && message.assetInfo.length)
-                        for (let i = 0; i < message.assetInfo.length; ++i)
+                        for (var i = 0; i < message.assetInfo.length; ++i)
                             $root.waves.data.assets.AssetInfoIfExists.encode(message.assetInfo[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                     return writer;
                 };
@@ -1544,9 +1929,9 @@ export const waves = $root.waves = (() => {
                 GetAssetsBatchResponse.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetsBatchResponse();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.GetAssetsBatchResponse();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             if (!(message.assetInfo && message.assetInfo.length))
@@ -1591,8 +1976,8 @@ export const waves = $root.waves = (() => {
                     if (message.assetInfo != null && message.hasOwnProperty("assetInfo")) {
                         if (!Array.isArray(message.assetInfo))
                             return "assetInfo: array expected";
-                        for (let i = 0; i < message.assetInfo.length; ++i) {
-                            let error = $root.waves.data.assets.AssetInfoIfExists.verify(message.assetInfo[i]);
+                        for (var i = 0; i < message.assetInfo.length; ++i) {
+                            var error = $root.waves.data.assets.AssetInfoIfExists.verify(message.assetInfo[i]);
                             if (error)
                                 return "assetInfo." + error;
                         }
@@ -1611,12 +1996,12 @@ export const waves = $root.waves = (() => {
                 GetAssetsBatchResponse.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.GetAssetsBatchResponse)
                         return object;
-                    let message = new $root.waves.data.assets.GetAssetsBatchResponse();
+                    var message = new $root.waves.data.assets.GetAssetsBatchResponse();
                     if (object.assetInfo) {
                         if (!Array.isArray(object.assetInfo))
                             throw TypeError(".waves.data.assets.GetAssetsBatchResponse.assetInfo: array expected");
                         message.assetInfo = [];
-                        for (let i = 0; i < object.assetInfo.length; ++i) {
+                        for (var i = 0; i < object.assetInfo.length; ++i) {
                             if (typeof object.assetInfo[i] !== "object")
                                 throw TypeError(".waves.data.assets.GetAssetsBatchResponse.assetInfo: object expected");
                             message.assetInfo[i] = $root.waves.data.assets.AssetInfoIfExists.fromObject(object.assetInfo[i]);
@@ -1637,12 +2022,12 @@ export const waves = $root.waves = (() => {
                 GetAssetsBatchResponse.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.arrays || options.defaults)
                         object.assetInfo = [];
                     if (message.assetInfo && message.assetInfo.length) {
                         object.assetInfo = [];
-                        for (let j = 0; j < message.assetInfo.length; ++j)
+                        for (var j = 0; j < message.assetInfo.length; ++j)
                             object.assetInfo[j] = $root.waves.data.assets.AssetInfoIfExists.toObject(message.assetInfo[j], options);
                     }
                     return object;
@@ -1682,7 +2067,7 @@ export const waves = $root.waves = (() => {
                  */
                 function SearchAssetRequest(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -1761,9 +2146,9 @@ export const waves = $root.waves = (() => {
                 SearchAssetRequest.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.SearchAssetRequest();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.SearchAssetRequest();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.query = reader.string();
@@ -1810,7 +2195,7 @@ export const waves = $root.waves = (() => {
                         if (!$util.isString(message.query))
                             return "query: string expected";
                     if (message.pagination != null && message.hasOwnProperty("pagination")) {
-                        let error = $root.waves.data.Pagination.verify(message.pagination);
+                        var error = $root.waves.data.Pagination.verify(message.pagination);
                         if (error)
                             return "pagination." + error;
                     }
@@ -1828,7 +2213,7 @@ export const waves = $root.waves = (() => {
                 SearchAssetRequest.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.SearchAssetRequest)
                         return object;
-                    let message = new $root.waves.data.assets.SearchAssetRequest();
+                    var message = new $root.waves.data.assets.SearchAssetRequest();
                     if (object.query != null)
                         message.query = String(object.query);
                     if (object.pagination != null) {
@@ -1851,7 +2236,7 @@ export const waves = $root.waves = (() => {
                 SearchAssetRequest.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults) {
                         object.query = "";
                         object.pagination = null;
@@ -1897,7 +2282,7 @@ export const waves = $root.waves = (() => {
                  */
                 function SearchAssetResponse(properties) {
                     if (properties)
-                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
@@ -1976,9 +2361,9 @@ export const waves = $root.waves = (() => {
                 SearchAssetResponse.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.SearchAssetResponse();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.assets.SearchAssetResponse();
                     while (reader.pos < end) {
-                        let tag = reader.uint32();
+                        var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
                             message.assetInfo = $root.waves.data.assets.AssetInfo.decode(reader, reader.uint32());
@@ -2022,7 +2407,7 @@ export const waves = $root.waves = (() => {
                     if (typeof message !== "object" || message === null)
                         return "object expected";
                     if (message.assetInfo != null && message.hasOwnProperty("assetInfo")) {
-                        let error = $root.waves.data.assets.AssetInfo.verify(message.assetInfo);
+                        var error = $root.waves.data.assets.AssetInfo.verify(message.assetInfo);
                         if (error)
                             return "assetInfo." + error;
                     }
@@ -2043,7 +2428,7 @@ export const waves = $root.waves = (() => {
                 SearchAssetResponse.fromObject = function fromObject(object) {
                     if (object instanceof $root.waves.data.assets.SearchAssetResponse)
                         return object;
-                    let message = new $root.waves.data.assets.SearchAssetResponse();
+                    var message = new $root.waves.data.assets.SearchAssetResponse();
                     if (object.assetInfo != null) {
                         if (typeof object.assetInfo !== "object")
                             throw TypeError(".waves.data.assets.SearchAssetResponse.assetInfo: object expected");
@@ -2069,7 +2454,7 @@ export const waves = $root.waves = (() => {
                 SearchAssetResponse.toObject = function toObject(message, options) {
                     if (!options)
                         options = {};
-                    let object = {};
+                    var object = {};
                     if (options.defaults) {
                         object.assetInfo = null;
                         if (options.bytes === String)
@@ -2134,31 +2519,64 @@ export const waves = $root.waves = (() => {
                 };
 
                 /**
-                 * Callback as used by {@link waves.data.assets.Assets#get}.
+                 * Callback as used by {@link waves.data.assets.Assets#getWaves}.
                  * @memberof waves.data.assets.Assets
-                 * @typedef GetCallback
+                 * @typedef GetWavesCallback
+                 * @type {function}
+                 * @param {Error|null} error Error, if any
+                 * @param {waves.data.assets.GetWavesResponse} [response] GetWavesResponse
+                 */
+
+                /**
+                 * Calls GetWaves.
+                 * @function getWaves
+                 * @memberof waves.data.assets.Assets
+                 * @instance
+                 * @param {waves.data.assets.IGetWavesRequest} request GetWavesRequest message or plain object
+                 * @param {waves.data.assets.Assets.GetWavesCallback} callback Node-style callback called with the error, if any, and GetWavesResponse
+                 * @returns {undefined}
+                 * @variation 1
+                 */
+                Object.defineProperty(Assets.prototype.getWaves = function getWaves(request, callback) {
+                    return this.rpcCall(getWaves, $root.waves.data.assets.GetWavesRequest, $root.waves.data.assets.GetWavesResponse, request, callback);
+                }, "name", { value: "GetWaves" });
+
+                /**
+                 * Calls GetWaves.
+                 * @function getWaves
+                 * @memberof waves.data.assets.Assets
+                 * @instance
+                 * @param {waves.data.assets.IGetWavesRequest} request GetWavesRequest message or plain object
+                 * @returns {Promise<waves.data.assets.GetWavesResponse>} Promise
+                 * @variation 2
+                 */
+
+                /**
+                 * Callback as used by {@link waves.data.assets.Assets#getAsset}.
+                 * @memberof waves.data.assets.Assets
+                 * @typedef GetAssetCallback
                  * @type {function}
                  * @param {Error|null} error Error, if any
                  * @param {waves.data.assets.GetAssetResponse} [response] GetAssetResponse
                  */
 
                 /**
-                 * Calls Get.
-                 * @function get
+                 * Calls GetAsset.
+                 * @function getAsset
                  * @memberof waves.data.assets.Assets
                  * @instance
                  * @param {waves.data.assets.IGetAssetRequest} request GetAssetRequest message or plain object
-                 * @param {waves.data.assets.Assets.GetCallback} callback Node-style callback called with the error, if any, and GetAssetResponse
+                 * @param {waves.data.assets.Assets.GetAssetCallback} callback Node-style callback called with the error, if any, and GetAssetResponse
                  * @returns {undefined}
                  * @variation 1
                  */
-                Object.defineProperty(Assets.prototype.get = function get(request, callback) {
-                    return this.rpcCall(get, $root.waves.data.assets.GetAssetRequest, $root.waves.data.assets.GetAssetResponse, request, callback);
-                }, "name", { value: "Get" });
+                Object.defineProperty(Assets.prototype.getAsset = function getAsset(request, callback) {
+                    return this.rpcCall(getAsset, $root.waves.data.assets.GetAssetRequest, $root.waves.data.assets.GetAssetResponse, request, callback);
+                }, "name", { value: "GetAsset" });
 
                 /**
-                 * Calls Get.
-                 * @function get
+                 * Calls GetAsset.
+                 * @function getAsset
                  * @memberof waves.data.assets.Assets
                  * @instance
                  * @param {waves.data.assets.IGetAssetRequest} request GetAssetRequest message or plain object
@@ -2167,31 +2585,31 @@ export const waves = $root.waves = (() => {
                  */
 
                 /**
-                 * Callback as used by {@link waves.data.assets.Assets#getBatch}.
+                 * Callback as used by {@link waves.data.assets.Assets#getAssetsBatch}.
                  * @memberof waves.data.assets.Assets
-                 * @typedef GetBatchCallback
+                 * @typedef GetAssetsBatchCallback
                  * @type {function}
                  * @param {Error|null} error Error, if any
                  * @param {waves.data.assets.GetAssetsBatchResponse} [response] GetAssetsBatchResponse
                  */
 
                 /**
-                 * Calls GetBatch.
-                 * @function getBatch
+                 * Calls GetAssetsBatch.
+                 * @function getAssetsBatch
                  * @memberof waves.data.assets.Assets
                  * @instance
                  * @param {waves.data.assets.IGetAssetsBatchRequest} request GetAssetsBatchRequest message or plain object
-                 * @param {waves.data.assets.Assets.GetBatchCallback} callback Node-style callback called with the error, if any, and GetAssetsBatchResponse
+                 * @param {waves.data.assets.Assets.GetAssetsBatchCallback} callback Node-style callback called with the error, if any, and GetAssetsBatchResponse
                  * @returns {undefined}
                  * @variation 1
                  */
-                Object.defineProperty(Assets.prototype.getBatch = function getBatch(request, callback) {
-                    return this.rpcCall(getBatch, $root.waves.data.assets.GetAssetsBatchRequest, $root.waves.data.assets.GetAssetsBatchResponse, request, callback);
-                }, "name", { value: "GetBatch" });
+                Object.defineProperty(Assets.prototype.getAssetsBatch = function getAssetsBatch(request, callback) {
+                    return this.rpcCall(getAssetsBatch, $root.waves.data.assets.GetAssetsBatchRequest, $root.waves.data.assets.GetAssetsBatchResponse, request, callback);
+                }, "name", { value: "GetAssetsBatch" });
 
                 /**
-                 * Calls GetBatch.
-                 * @function getBatch
+                 * Calls GetAssetsBatch.
+                 * @function getAssetsBatch
                  * @memberof waves.data.assets.Assets
                  * @instance
                  * @param {waves.data.assets.IGetAssetsBatchRequest} request GetAssetsBatchRequest message or plain object
@@ -2200,31 +2618,31 @@ export const waves = $root.waves = (() => {
                  */
 
                 /**
-                 * Callback as used by {@link waves.data.assets.Assets#search}.
+                 * Callback as used by {@link waves.data.assets.Assets#searchAsset}.
                  * @memberof waves.data.assets.Assets
-                 * @typedef SearchCallback
+                 * @typedef SearchAssetCallback
                  * @type {function}
                  * @param {Error|null} error Error, if any
                  * @param {waves.data.assets.SearchAssetResponse} [response] SearchAssetResponse
                  */
 
                 /**
-                 * Calls Search.
-                 * @function search
+                 * Calls SearchAsset.
+                 * @function searchAsset
                  * @memberof waves.data.assets.Assets
                  * @instance
                  * @param {waves.data.assets.ISearchAssetRequest} request SearchAssetRequest message or plain object
-                 * @param {waves.data.assets.Assets.SearchCallback} callback Node-style callback called with the error, if any, and SearchAssetResponse
+                 * @param {waves.data.assets.Assets.SearchAssetCallback} callback Node-style callback called with the error, if any, and SearchAssetResponse
                  * @returns {undefined}
                  * @variation 1
                  */
-                Object.defineProperty(Assets.prototype.search = function search(request, callback) {
-                    return this.rpcCall(search, $root.waves.data.assets.SearchAssetRequest, $root.waves.data.assets.SearchAssetResponse, request, callback);
-                }, "name", { value: "Search" });
+                Object.defineProperty(Assets.prototype.searchAsset = function searchAsset(request, callback) {
+                    return this.rpcCall(searchAsset, $root.waves.data.assets.SearchAssetRequest, $root.waves.data.assets.SearchAssetResponse, request, callback);
+                }, "name", { value: "SearchAsset" });
 
                 /**
-                 * Calls Search.
-                 * @function search
+                 * Calls SearchAsset.
+                 * @function searchAsset
                  * @memberof waves.data.assets.Assets
                  * @instance
                  * @param {waves.data.assets.ISearchAssetRequest} request SearchAssetRequest message or plain object
@@ -2257,7 +2675,7 @@ export const waves = $root.waves = (() => {
              */
             function ChangedByTransactionRequest(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -2326,9 +2744,9 @@ export const waves = $root.waves = (() => {
             ChangedByTransactionRequest.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ChangedByTransactionRequest();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ChangedByTransactionRequest();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.transactionId = reader.bytes();
@@ -2385,7 +2803,7 @@ export const waves = $root.waves = (() => {
             ChangedByTransactionRequest.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.ChangedByTransactionRequest)
                     return object;
-                let message = new $root.waves.data.ChangedByTransactionRequest();
+                var message = new $root.waves.data.ChangedByTransactionRequest();
                 if (object.transactionId != null)
                     if (typeof object.transactionId === "string")
                         $util.base64.decode(object.transactionId, message.transactionId = $util.newBuffer($util.base64.length(object.transactionId)), 0);
@@ -2406,7 +2824,7 @@ export const waves = $root.waves = (() => {
             ChangedByTransactionRequest.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (options.defaults)
                     if (options.bytes === String)
                         object.transactionId = "";
@@ -2441,7 +2859,7 @@ export const waves = $root.waves = (() => {
              * @memberof waves.data
              * @interface IBlockchainCoordinate
              * @property {number|null} [height] BlockchainCoordinate height
-             * @property {number|Long|null} [blockTimestamp] BlockchainCoordinate blockTimestamp
+             * @property {Long|null} [blockTimestamp] BlockchainCoordinate blockTimestamp
              */
 
             /**
@@ -2454,7 +2872,7 @@ export const waves = $root.waves = (() => {
              */
             function BlockchainCoordinate(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -2469,14 +2887,14 @@ export const waves = $root.waves = (() => {
 
             /**
              * BlockchainCoordinate blockTimestamp.
-             * @member {number|Long} blockTimestamp
+             * @member {Long} blockTimestamp
              * @memberof waves.data.BlockchainCoordinate
              * @instance
              */
             BlockchainCoordinate.prototype.blockTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
             // OneOf field names bound to virtual getters and setters
-            let $oneOfFields;
+            var $oneOfFields;
 
             /**
              * BlockchainCoordinate coordinate.
@@ -2547,9 +2965,9 @@ export const waves = $root.waves = (() => {
             BlockchainCoordinate.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.BlockchainCoordinate();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.BlockchainCoordinate();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.height = reader.int32();
@@ -2592,7 +3010,7 @@ export const waves = $root.waves = (() => {
             BlockchainCoordinate.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                let properties = {};
+                var properties = {};
                 if (message.height != null && message.hasOwnProperty("height")) {
                     properties.coordinate = 1;
                     if (!$util.isInteger(message.height))
@@ -2619,7 +3037,7 @@ export const waves = $root.waves = (() => {
             BlockchainCoordinate.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.BlockchainCoordinate)
                     return object;
-                let message = new $root.waves.data.BlockchainCoordinate();
+                var message = new $root.waves.data.BlockchainCoordinate();
                 if (object.height != null)
                     message.height = object.height | 0;
                 if (object.blockTimestamp != null)
@@ -2646,7 +3064,7 @@ export const waves = $root.waves = (() => {
             BlockchainCoordinate.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (message.height != null && message.hasOwnProperty("height")) {
                     object.height = message.height;
                     if (options.oneofs)
@@ -2697,7 +3115,7 @@ export const waves = $root.waves = (() => {
              */
             function Pagination(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -2776,9 +3194,9 @@ export const waves = $root.waves = (() => {
             Pagination.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.Pagination();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.Pagination();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.limit = reader.int32();
@@ -2841,7 +3259,7 @@ export const waves = $root.waves = (() => {
             Pagination.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.Pagination)
                     return object;
-                let message = new $root.waves.data.Pagination();
+                var message = new $root.waves.data.Pagination();
                 if (object.limit != null)
                     message.limit = object.limit | 0;
                 if (object.after != null)
@@ -2864,7 +3282,7 @@ export const waves = $root.waves = (() => {
             Pagination.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (options.defaults) {
                     object.limit = 0;
                     if (options.bytes === String)
@@ -2916,7 +3334,7 @@ export const waves = $root.waves = (() => {
              */
             function ValidationError(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -2995,9 +3413,9 @@ export const waves = $root.waves = (() => {
             ValidationError.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ValidationError();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ValidationError();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.message = reader.string();
@@ -3060,7 +3478,7 @@ export const waves = $root.waves = (() => {
             ValidationError.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.ValidationError)
                     return object;
-                let message = new $root.waves.data.ValidationError();
+                var message = new $root.waves.data.ValidationError();
                 if (object.message != null)
                     message.message = String(object.message);
                 if (object.field != null)
@@ -3080,7 +3498,7 @@ export const waves = $root.waves = (() => {
             ValidationError.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (options.defaults) {
                     object.message = "";
                     object.field = "";
@@ -3125,7 +3543,7 @@ export const waves = $root.waves = (() => {
              */
             function ParseError(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -3194,9 +3612,9 @@ export const waves = $root.waves = (() => {
             ParseError.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ParseError();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ParseError();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.message = reader.string();
@@ -3253,7 +3671,7 @@ export const waves = $root.waves = (() => {
             ParseError.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.ParseError)
                     return object;
-                let message = new $root.waves.data.ParseError();
+                var message = new $root.waves.data.ParseError();
                 if (object.message != null)
                     message.message = String(object.message);
                 return message;
@@ -3271,7 +3689,7 @@ export const waves = $root.waves = (() => {
             ParseError.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (options.defaults)
                     object.message = "";
                 if (message.message != null && message.hasOwnProperty("message"))
@@ -3312,7 +3730,7 @@ export const waves = $root.waves = (() => {
              */
             function ServiceError(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -3381,9 +3799,9 @@ export const waves = $root.waves = (() => {
             ServiceError.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ServiceError();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.ServiceError();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.message = reader.string();
@@ -3440,7 +3858,7 @@ export const waves = $root.waves = (() => {
             ServiceError.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.ServiceError)
                     return object;
-                let message = new $root.waves.data.ServiceError();
+                var message = new $root.waves.data.ServiceError();
                 if (object.message != null)
                     message.message = String(object.message);
                 return message;
@@ -3458,7 +3876,7 @@ export const waves = $root.waves = (() => {
             ServiceError.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (options.defaults)
                     object.message = "";
                 if (message.message != null && message.hasOwnProperty("message"))
@@ -3499,7 +3917,7 @@ export const waves = $root.waves = (() => {
              */
             function Timeout(properties) {
                 if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
                             this[keys[i]] = properties[keys[i]];
             }
@@ -3568,9 +3986,9 @@ export const waves = $root.waves = (() => {
             Timeout.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.Timeout();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.waves.data.Timeout();
                 while (reader.pos < end) {
-                    let tag = reader.uint32();
+                    var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
                         message.message = reader.string();
@@ -3627,7 +4045,7 @@ export const waves = $root.waves = (() => {
             Timeout.fromObject = function fromObject(object) {
                 if (object instanceof $root.waves.data.Timeout)
                     return object;
-                let message = new $root.waves.data.Timeout();
+                var message = new $root.waves.data.Timeout();
                 if (object.message != null)
                     message.message = String(object.message);
                 return message;
@@ -3645,7 +4063,7 @@ export const waves = $root.waves = (() => {
             Timeout.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
-                let object = {};
+                var object = {};
                 if (options.defaults)
                     object.message = "";
                 if (message.message != null && message.hasOwnProperty("message"))
@@ -3673,4 +4091,4 @@ export const waves = $root.waves = (() => {
     return waves;
 })();
 
-export { $root as default };
+module.exports = $root;

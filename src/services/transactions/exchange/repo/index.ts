@@ -1,7 +1,6 @@
 import { propEq } from 'ramda';
 
 import { withStatementTimeout } from '../../../../db/driver';
-import { TransactionInfo } from '../../../../types';
 import { CommonRepoDependencies } from '../../..';
 import { getByIdPreset } from '../../../_common/presets/pg/getById';
 import { mgetByIdsPreset } from '../../../_common/presets/pg/mgetByIds';
@@ -13,9 +12,10 @@ import { result } from './schema';
 import * as sql from './sql';
 import transformTxInfo from './transformTxInfo';
 import {
-  ExchangeTxsRepo,
-  ExchangeTxsSearchRequest,
   ExchangeTxDbResponse,
+  ExchangeTransactionInfo,
+  ExchangeTxsSearchRequest,
+  ExchangeTxsRepo,
 } from './types';
 
 export default ({
@@ -49,7 +49,7 @@ export default ({
       Cursor,
       ExchangeTxsSearchRequest,
       ExchangeTxDbResponse,
-      TransactionInfo
+      ExchangeTransactionInfo
     >({
       name: 'transactions.exchange.search',
       sql: sql.search,

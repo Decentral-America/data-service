@@ -30,7 +30,7 @@ import {
 
 import { SearchedItems } from '../../../types';
 
-const createResolver = <
+export const createResolver = <
   RequestRaw,
   RequestTransformed,
   ResponseRaw,

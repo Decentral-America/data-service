@@ -27,16 +27,19 @@ export namespace waves {
                 reissuable?: (boolean|null);
 
                 /** AssetInfo totalVolume */
-                totalVolume?: (number|Long|null);
+                totalVolume?: (Long|null);
 
                 /** AssetInfo script */
                 script?: (Uint8Array|null);
 
                 /** AssetInfo sponsorship */
-                sponsorship?: (number|Long|null);
+                sponsorship?: (Long|null);
 
                 /** AssetInfo nft */
                 nft?: (boolean|null);
+
+                /** AssetInfo originTransactionId */
+                originTransactionId?: (Uint8Array|null);
             }
 
             /** Represents an AssetInfo. */
@@ -64,16 +67,19 @@ export namespace waves {
                 public reissuable: boolean;
 
                 /** AssetInfo totalVolume. */
-                public totalVolume: (number|Long);
+                public totalVolume: Long;
 
                 /** AssetInfo script. */
                 public script: Uint8Array;
 
                 /** AssetInfo sponsorship. */
-                public sponsorship: (number|Long);
+                public sponsorship: Long;
 
                 /** AssetInfo nft. */
                 public nft: boolean;
+
+                /** AssetInfo originTransactionId. */
+                public originTransactionId: Uint8Array;
 
                 /**
                  * Creates a new AssetInfo instance using the specified properties.
@@ -153,7 +159,7 @@ export namespace waves {
                 decimals?: (number|null);
 
                 /** WavesInfo totalVolume */
-                totalVolume?: (number|Long|null);
+                totalVolume?: (Long|null);
             }
 
             /** Represents a WavesInfo. */
@@ -169,7 +175,7 @@ export namespace waves {
                 public decimals: number;
 
                 /** WavesInfo totalVolume. */
-                public totalVolume: (number|Long);
+                public totalVolume: Long;
 
                 /**
                  * Creates a new WavesInfo instance using the specified properties.
@@ -237,6 +243,180 @@ export namespace waves {
 
                 /**
                  * Converts this WavesInfo to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a GetWavesRequest. */
+            interface IGetWavesRequest {
+            }
+
+            /** Represents a GetWavesRequest. */
+            class GetWavesRequest implements IGetWavesRequest {
+
+                /**
+                 * Constructs a new GetWavesRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: waves.data.assets.IGetWavesRequest);
+
+                /**
+                 * Creates a new GetWavesRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetWavesRequest instance
+                 */
+                public static create(properties?: waves.data.assets.IGetWavesRequest): waves.data.assets.GetWavesRequest;
+
+                /**
+                 * Encodes the specified GetWavesRequest message. Does not implicitly {@link waves.data.assets.GetWavesRequest.verify|verify} messages.
+                 * @param message GetWavesRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: waves.data.assets.IGetWavesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified GetWavesRequest message, length delimited. Does not implicitly {@link waves.data.assets.GetWavesRequest.verify|verify} messages.
+                 * @param message GetWavesRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: waves.data.assets.IGetWavesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a GetWavesRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetWavesRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): waves.data.assets.GetWavesRequest;
+
+                /**
+                 * Decodes a GetWavesRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetWavesRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): waves.data.assets.GetWavesRequest;
+
+                /**
+                 * Verifies a GetWavesRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a GetWavesRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetWavesRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): waves.data.assets.GetWavesRequest;
+
+                /**
+                 * Creates a plain object from a GetWavesRequest message. Also converts values to other types if specified.
+                 * @param message GetWavesRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: waves.data.assets.GetWavesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this GetWavesRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a GetWavesResponse. */
+            interface IGetWavesResponse {
+
+                /** GetWavesResponse wavesInfo */
+                wavesInfo?: (waves.data.assets.IWavesInfo|null);
+            }
+
+            /** Represents a GetWavesResponse. */
+            class GetWavesResponse implements IGetWavesResponse {
+
+                /**
+                 * Constructs a new GetWavesResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: waves.data.assets.IGetWavesResponse);
+
+                /** GetWavesResponse wavesInfo. */
+                public wavesInfo?: (waves.data.assets.IWavesInfo|null);
+
+                /**
+                 * Creates a new GetWavesResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetWavesResponse instance
+                 */
+                public static create(properties?: waves.data.assets.IGetWavesResponse): waves.data.assets.GetWavesResponse;
+
+                /**
+                 * Encodes the specified GetWavesResponse message. Does not implicitly {@link waves.data.assets.GetWavesResponse.verify|verify} messages.
+                 * @param message GetWavesResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: waves.data.assets.IGetWavesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified GetWavesResponse message, length delimited. Does not implicitly {@link waves.data.assets.GetWavesResponse.verify|verify} messages.
+                 * @param message GetWavesResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: waves.data.assets.IGetWavesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a GetWavesResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetWavesResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): waves.data.assets.GetWavesResponse;
+
+                /**
+                 * Decodes a GetWavesResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetWavesResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): waves.data.assets.GetWavesResponse;
+
+                /**
+                 * Verifies a GetWavesResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a GetWavesResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetWavesResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): waves.data.assets.GetWavesResponse;
+
+                /**
+                 * Creates a plain object from a GetWavesResponse message. Also converts values to other types if specified.
+                 * @param message GetWavesResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: waves.data.assets.GetWavesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this GetWavesResponse to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
@@ -905,70 +1085,91 @@ export namespace waves {
                 public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): Assets;
 
                 /**
-                 * Calls Get.
+                 * Calls GetWaves.
+                 * @param request GetWavesRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and GetWavesResponse
+                 */
+                public getWaves(request: waves.data.assets.IGetWavesRequest, callback: waves.data.assets.Assets.GetWavesCallback): void;
+
+                /**
+                 * Calls GetWaves.
+                 * @param request GetWavesRequest message or plain object
+                 * @returns Promise
+                 */
+                public getWaves(request: waves.data.assets.IGetWavesRequest): Promise<waves.data.assets.GetWavesResponse>;
+
+                /**
+                 * Calls GetAsset.
                  * @param request GetAssetRequest message or plain object
                  * @param callback Node-style callback called with the error, if any, and GetAssetResponse
                  */
-                public get(request: waves.data.assets.IGetAssetRequest, callback: waves.data.assets.Assets.GetCallback): void;
+                public getAsset(request: waves.data.assets.IGetAssetRequest, callback: waves.data.assets.Assets.GetAssetCallback): void;
 
                 /**
-                 * Calls Get.
+                 * Calls GetAsset.
                  * @param request GetAssetRequest message or plain object
                  * @returns Promise
                  */
-                public get(request: waves.data.assets.IGetAssetRequest): Promise<waves.data.assets.GetAssetResponse>;
+                public getAsset(request: waves.data.assets.IGetAssetRequest): Promise<waves.data.assets.GetAssetResponse>;
 
                 /**
-                 * Calls GetBatch.
+                 * Calls GetAssetsBatch.
                  * @param request GetAssetsBatchRequest message or plain object
                  * @param callback Node-style callback called with the error, if any, and GetAssetsBatchResponse
                  */
-                public getBatch(request: waves.data.assets.IGetAssetsBatchRequest, callback: waves.data.assets.Assets.GetBatchCallback): void;
+                public getAssetsBatch(request: waves.data.assets.IGetAssetsBatchRequest, callback: waves.data.assets.Assets.GetAssetsBatchCallback): void;
 
                 /**
-                 * Calls GetBatch.
+                 * Calls GetAssetsBatch.
                  * @param request GetAssetsBatchRequest message or plain object
                  * @returns Promise
                  */
-                public getBatch(request: waves.data.assets.IGetAssetsBatchRequest): Promise<waves.data.assets.GetAssetsBatchResponse>;
+                public getAssetsBatch(request: waves.data.assets.IGetAssetsBatchRequest): Promise<waves.data.assets.GetAssetsBatchResponse>;
 
                 /**
-                 * Calls Search.
+                 * Calls SearchAsset.
                  * @param request SearchAssetRequest message or plain object
                  * @param callback Node-style callback called with the error, if any, and SearchAssetResponse
                  */
-                public search(request: waves.data.assets.ISearchAssetRequest, callback: waves.data.assets.Assets.SearchCallback): void;
+                public searchAsset(request: waves.data.assets.ISearchAssetRequest, callback: waves.data.assets.Assets.SearchAssetCallback): void;
 
                 /**
-                 * Calls Search.
+                 * Calls SearchAsset.
                  * @param request SearchAssetRequest message or plain object
                  * @returns Promise
                  */
-                public search(request: waves.data.assets.ISearchAssetRequest): Promise<waves.data.assets.SearchAssetResponse>;
+                public searchAsset(request: waves.data.assets.ISearchAssetRequest): Promise<waves.data.assets.SearchAssetResponse>;
             }
 
             namespace Assets {
 
                 /**
-                 * Callback as used by {@link waves.data.assets.Assets#get}.
+                 * Callback as used by {@link waves.data.assets.Assets#getWaves}.
+                 * @param error Error, if any
+                 * @param [response] GetWavesResponse
+                 */
+                type GetWavesCallback = (error: (Error|null), response?: waves.data.assets.GetWavesResponse) => void;
+
+                /**
+                 * Callback as used by {@link waves.data.assets.Assets#getAsset}.
                  * @param error Error, if any
                  * @param [response] GetAssetResponse
                  */
-                type GetCallback = (error: (Error|null), response?: waves.data.assets.GetAssetResponse) => void;
+                type GetAssetCallback = (error: (Error|null), response?: waves.data.assets.GetAssetResponse) => void;
 
                 /**
-                 * Callback as used by {@link waves.data.assets.Assets#getBatch}.
+                 * Callback as used by {@link waves.data.assets.Assets#getAssetsBatch}.
                  * @param error Error, if any
                  * @param [response] GetAssetsBatchResponse
                  */
-                type GetBatchCallback = (error: (Error|null), response?: waves.data.assets.GetAssetsBatchResponse) => void;
+                type GetAssetsBatchCallback = (error: (Error|null), response?: waves.data.assets.GetAssetsBatchResponse) => void;
 
                 /**
-                 * Callback as used by {@link waves.data.assets.Assets#search}.
+                 * Callback as used by {@link waves.data.assets.Assets#searchAsset}.
                  * @param error Error, if any
                  * @param [response] SearchAssetResponse
                  */
-                type SearchCallback = (error: (Error|null), response?: waves.data.assets.SearchAssetResponse) => void;
+                type SearchAssetCallback = (error: (Error|null), response?: waves.data.assets.SearchAssetResponse) => void;
             }
         }
 
@@ -1069,7 +1270,7 @@ export namespace waves {
             height?: (number|null);
 
             /** BlockchainCoordinate blockTimestamp */
-            blockTimestamp?: (number|Long|null);
+            blockTimestamp?: (Long|null);
         }
 
         /** Represents a BlockchainCoordinate. */
@@ -1085,7 +1286,7 @@ export namespace waves {
             public height: number;
 
             /** BlockchainCoordinate blockTimestamp. */
-            public blockTimestamp: (number|Long);
+            public blockTimestamp: Long;
 
             /** BlockchainCoordinate coordinate. */
             public coordinate?: ("height"|"blockTimestamp");

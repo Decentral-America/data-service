@@ -1,7 +1,6 @@
 import { propEq } from 'ramda';
 
 import { withStatementTimeout } from '../../../../db/driver';
-import { TransactionInfo } from '../../../../types';
 import { CommonRepoDependencies } from '../../..';
 import { getByIdPreset } from '../../../_common/presets/pg/getById';
 import { mgetByIdsPreset } from '../../../_common/presets/pg/mgetByIds';
@@ -16,6 +15,7 @@ import {
   PaymentTxsRepo,
   PaymentTxsSearchRequest,
   PaymentTxDbResponse,
+  PaymentTransactionInfo,
 } from './types';
 
 export default ({
@@ -49,7 +49,7 @@ export default ({
       Cursor,
       PaymentTxsSearchRequest,
       PaymentTxDbResponse,
-      TransactionInfo
+      PaymentTransactionInfo
     >({
       name: 'transactions.payment.search',
       sql: sql.search,

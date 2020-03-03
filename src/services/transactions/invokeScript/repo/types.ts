@@ -2,7 +2,9 @@ import { BigNumber } from '@waves/data-entities';
 import { RawTx, Tx, CommonFilters } from '../../_common/types';
 import { RequestWithCursor } from '../../../_common/pagination';
 import { WithSortOrder, WithLimit } from '../../../_common';
-import { Repo, TransactionInfo } from '../../../../types';
+import { Repo, CacheSync } from '../../../../types';
+
+export type InvokeScriptTxsCache = CacheSync<string, RawInvokeScriptTx>;
 
 export type InvokeScriptTxArgType = 'integer' | 'boolean' | 'binary' | 'string';
 
@@ -47,7 +49,7 @@ export type InvokeScriptTxPayment = {
   positionInPayment: RawInvokeScriptTx['position_in_payment'];
 };
 
-export type InvokeScriptTx = Tx & {
+export type InvokeScriptTransactionInfo = Tx & {
   dApp: string;
   call: {
     function: string;
@@ -76,5 +78,5 @@ export type InvokeScriptTxsRepo = Repo<
   InvokeScriptTxsGetRequest,
   InvokeScriptTxsMgetRequest,
   InvokeScriptTxsSearchRequest,
-  TransactionInfo
+  InvokeScriptTransactionInfo
 >;

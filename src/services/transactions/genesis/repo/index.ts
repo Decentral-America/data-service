@@ -2,7 +2,6 @@ import { propEq } from 'ramda';
 
 import { withStatementTimeout } from '../../../../db/driver';
 import { CommonRepoDependencies } from '../../..';
-import { TransactionInfo } from '../../../../types';
 import { getByIdPreset } from '../../../_common/presets/pg/getById';
 import { mgetByIdsPreset } from '../../../_common/presets/pg/mgetByIds';
 import { searchPreset } from '../../../_common/presets/pg/search';
@@ -13,9 +12,10 @@ import { transformTxInfo } from '../../_common/transformTxInfo';
 import { result as resultSchema } from './schema';
 import * as sql from './sql';
 import {
-  GenesisTxsRepo,
   GenesisTxDbResponse,
+  GenesisTransactionInfo,
   GenesisTxsSearchRequest,
+  GenesisTxsRepo,
 } from './types';
 
 export default ({
@@ -49,7 +49,7 @@ export default ({
       Cursor,
       GenesisTxsSearchRequest,
       GenesisTxDbResponse,
-      TransactionInfo
+      GenesisTransactionInfo
     >({
       name: 'transactions.genesis.search',
       sql: sql.search,

@@ -103,6 +103,11 @@ declare module 'ramda' {
       list: ReadonlyArray<A>
     ): R;
 
+    sequence<A, F extends Maybe<Array<A>>>(
+      f: (v: A) => Maybe<A>,
+      traversable: ReadonlyArray<Maybe<A>>
+    ): F;
+
     // compose
     compose<V0, T1, T2, T3, T4, T5, T6, T7>(
       fn6: (x: T6) => T7,

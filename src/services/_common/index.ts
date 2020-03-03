@@ -1,3 +1,5 @@
+import { DecimalsFormat } from '../types';
+
 export enum SortOrder {
   Ascending = 'asc',
   Descending = 'desc',
@@ -13,3 +15,5 @@ export type WithSortOrder = {
 export type WithLimit = {
   limit: number;
 };
+
+export const DEFAULT_DECIMALS_FORMAT = DecimalsFormat.Float;

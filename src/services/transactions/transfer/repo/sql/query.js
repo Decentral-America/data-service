@@ -14,23 +14,13 @@ const selectFromFiltered = filtered =>
           sender_public_key: 'addr.public_key',
           asset_id: pg.raw(`coalesce(a.asset_id,'WAVES')`),
           attachment: 't.attachment',
-          amount: pg.raw(
-            't.amount * 10^(-coalesce(a.decimals, 8))::double precision'
-          ),
+          amount: pg.raw('t.amount'),
           recipient_address_uid: 't.recipient_address_uid',
           recipient_alias_uid: 't.recipient_alias_uid',
           fee_asset_uid: 't.fee_asset_uid',
         })
-        .leftJoin(
-          { a: pg('assets').select('uid', 'asset_id', 'decimals') },
-          'a.uid',
-          't.asset_uid'
-        )
-        .leftJoin(
-          { addr: pg('addresses').select('uid', 'address', 'public_key') },
-          'addr.uid',
-          't.sender_uid'
-        )
+        .leftJoin({ a: 'assets_data' }, 'a.uid', 't.asset_uid')
+        .leftJoin({ addr: 'addresses' }, 'addr.uid', 't.sender_uid')
     )
     .select({
       // common
@@ -42,7 +32,7 @@ const selectFromFiltered = filtered =>
       signature: 'txs.signature',
       proofs: 'txs.proofs',
       tx_version: 'txs.tx_version',
-      fee: pg.raw('txs.fee * 10^(-coalesce(fa.decimals, 8))::double precision'),
+      fee: pg.raw('txs.fee'),
       sender: 't.sender',
       sender_public_key: 't.sender_public_key',
 
@@ -57,18 +47,14 @@ const selectFromFiltered = filtered =>
     })
     .from({ t: 'ts' })
     .leftJoin('txs', 'txs.uid', 't.tx_uid')
-    .leftJoin(
-      { fa: pg('assets').select('uid', 'asset_id', 'decimals') },
-      'fa.uid',
-      't.fee_asset_uid'
-    )
+    .leftJoin({ fa: 'assets_data' }, 'fa.uid', 't.fee_asset_uid')
     .leftJoin(
       { recipient_addr: pg('addresses').select('uid', 'address') },
       'recipient_addr.uid',
       't.recipient_address_uid'
     )
     .leftJoin(
-      { recipient_alias: pg('txs_10').select('tx_uid', 'alias') },
+      { recipient_alias: 'txs_10' },
       'recipient_alias.tx_uid',
       't.recipient_alias_uid'
     );

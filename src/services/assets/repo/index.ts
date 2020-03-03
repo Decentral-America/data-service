@@ -1,14 +1,10 @@
-// import { propEq } from 'ramda';
-import { of as taskOf, fromPromised, task } from 'folktale/concurrency/task';
-import { of as just, Maybe, fromNullable } from 'folktale/maybe';
+import { of as taskOf } from 'folktale/concurrency/task';
+import { of as just, Maybe } from 'folktale/maybe';
 import { Ok as ok } from 'folktale/result';
-import { Asset } from '@waves/data-entities';
+import { identity } from 'ramda';
+import { decode as base58Decode } from 'bs58';
 
-// import { withStatementTimeout } from '../../../db/driver/utils';
-import {
-  // forEach,
-  isEmpty,
-} from '../../../utils/fp/maybeOps';
+import { isEmpty } from '../../../utils/fp/maybeOps';
 
 import { CommonRepoDependencies } from '../..';
 
@@ -16,53 +12,43 @@ import { CommonRepoDependencies } from '../..';
 import {
   get as createGetResolver,
   mget as createMgetResolver,
-  search as createSearchResolver,
+  createResolver,
 } from '../../_common/createResolver';
-// import { getData as mgetByIdsPg } from '../../_common/presets/pg/mgetByIds/pg';
-// import { validateResult } from '../../_common/presets/validation';
-import { transformResults as transformMgetResults } from '../../_common/presets/pg/mgetByIds/transformResult';
-// import { searchPreset } from '../../_common/presets/pg/search';
 
-// validation
-// import { result as resultSchema } from './schema';
-
-import { transformDbResponse } from './transformAsset';
-// import * as sql from './sql';
 import {
   AssetsCache,
-  // AssetDbResponse,
   AssetsRepo,
   AssetsGetRequest,
   AssetsMgetRequest,
   AssetsSearchRequest,
 } from './types';
-// import { serialize, deserialize, Cursor } from './cursor';
 export { create as createCache } from './cache';
-import { decode as base58Decode, encode as base58Encode } from 'bs58';
-import { waves } from './grpc';
-import { toDbError } from '../../../errorHandling';
+import { toDbError, AppError } from '../../../errorHandling';
+import { SearchedItems } from '../../../types';
+import { waves } from './grpc/grpc';
+import { AssetsGrpcService } from './impl';
+import { wavesAssetInfo } from './constants';
 
 export default ({
-  drivers: {
-    // pg
-  },
   emitEvent,
   cache,
-  // timeouts,
   assetsGrpcService,
 }: CommonRepoDependencies & {
   cache: AssetsCache;
 } & {
-  assetsGrpcService: {
-    Get: waves.data.assets.Assets['get'];
-    GetBatch: waves.data.assets.Assets['getBatch'];
-    Search: waves.data.assets.Assets;
-  };
+  assetsGrpcService: AssetsGrpcService;
 }): AssetsRepo => {
-  const SERVICE_NAME = {
+  const REPO_NAME = {
     GET: 'assets.get',
     MGET: 'assets.mget',
     SEARCH: 'assets.search',
+  };
+
+  const taskMapRejectedHandler = <E extends AppError>(
+    repo: string,
+    request: AssetsGetRequest | AssetsMgetRequest | AssetsSearchRequest
+  ) => (e: E) => {
+    return toDbError({ repo, request }, e.error);
   };
 
   return {
@@ -70,35 +56,47 @@ export default ({
       AssetsGetRequest,
       AssetsGetRequest,
       waves.data.assets.AssetInfo,
-      Asset
+      waves.data.assets.AssetInfo
     >({
       transformInput: ok,
       getData: request =>
         cache.get(request).matchWith({
           Just: ({ value }) => taskOf(just(value)),
-          Nothing: () =>
-            fromPromised<Error, waves.data.assets.GetAssetResponse>(() =>
-              assetsGrpcService.Get.get(
-                waves.data.assets.GetAssetRequest.create({
+          Nothing: () => {
+            if (request === 'WAVES') {
+              return assetsGrpcService
+                .getWaves(waves.data.assets.GetWavesRequest.create())
+                .map(res =>
+                  res.map(wavesInfoData => {
+                    const assetInfo = waves.data.assets.AssetInfo.create({
+                      ...wavesAssetInfo.toJSON(),
+                      ...wavesInfoData,
+                    });
+                    cache.set(request, assetInfo);
+                    return assetInfo;
+                  })
+                )
+                .mapRejected(taskMapRejectedHandler(REPO_NAME['GET'], request));
+            } else {
+              return assetsGrpcService
+                .getAsset({
                   assetId: base58Decode(request),
                 })
-              )
-            )()
-              .map(res =>
-                fromNullable(res.assetInfo).map(assetInfoData => {
-                  const assetInfo = new waves.data.assets.AssetInfo(
-                    assetInfoData
-                  );
-                  cache.set(request, assetInfo);
-                  return assetInfo;
-                })
-              )
-              .mapRejected(e =>
-                toDbError({ service: SERVICE_NAME['GET'], request }, e)
-              ),
+                .map(res =>
+                  res.map(assetInfoData => {
+                    const assetInfo = waves.data.assets.AssetInfo.create(
+                      assetInfoData
+                    );
+                    cache.set(request, assetInfo);
+                    return assetInfo;
+                  })
+                )
+                .mapRejected(taskMapRejectedHandler(REPO_NAME['GET'], request));
+            }
+          },
         }),
       validateResult: ok,
-      transformResult: res => res.map(transformDbResponse),
+      transformResult: identity,
       emitEvent,
     }),
 
@@ -106,7 +104,7 @@ export default ({
       AssetsMgetRequest,
       AssetsMgetRequest,
       waves.data.assets.AssetInfo,
-      Asset
+      waves.data.assets.AssetInfo
     >({
       transformInput: ok,
       getData: request => {
@@ -118,28 +116,21 @@ export default ({
           if (isEmpty(x)) acc.push(i);
           return acc;
         }, []);
-
         const notCachedAssetIds = notCachedIndexes.map(i => request[i]);
 
-        const getBatchT = fromPromised<
-          Error,
-          waves.data.assets.GetAssetsBatchResponse
-        >(() =>
-          assetsGrpcService.GetBatch.getBatch(
-            waves.data.assets.GetAssetsBatchRequest.create({
-              assetIds: notCachedAssetIds.map(assetId => base58Decode(assetId)),
-            })
-          )
-        )().map(res => res.assetInfo);
+        const getBatchT = assetsGrpcService.getAssetsBatch(
+          waves.data.assets.GetAssetsBatchRequest.create({
+            assetIds: notCachedAssetIds.map(assetId => base58Decode(assetId)),
+          })
+        );
 
-        return taskOf<Error, void>(undefined)
-          .chain<Error, waves.data.assets.IAssetInfoIfExists[]>(() =>
+        return taskOf<AppError, void>(undefined)
+          .chain<AppError, Maybe<waves.data.assets.IAssetInfo>[]>(() =>
             notCachedIndexes.length > 0 ? getBatchT : taskOf([])
           )
           .map(assetInfos => {
             assetInfos.forEach((maybeAssetInfo, index) => {
-              const m = fromNullable(maybeAssetInfo.assetInfo);
-              return m.map(assetInfoData => {
+              return maybeAssetInfo.map(assetInfoData => {
                 const assetInfo = waves.data.assets.AssetInfo.create(
                   assetInfoData
                 );
@@ -149,58 +140,50 @@ export default ({
             });
             return results;
           })
-          .mapRejected(e =>
-            toDbError({ service: SERVICE_NAME['GET'], request }, e)
-          );
+          .mapRejected(taskMapRejectedHandler(REPO_NAME['MGET'], request));
       },
       validateResult: ok,
-      transformResult: transformMgetResults(transformDbResponse),
+      transformResult: identity,
       emitEvent,
     }),
 
-    search: createSearchResolver<
-      AssetsSearchRequest,
-      AssetsSearchRequest,
-      waves.data.assets.AssetInfo,
-      Asset
-    >({
-      transformInput: ok,
-      getData: request => {
-        const query = request.search || request.ticker;
-        if (typeof query === 'undefined') {
-          return taskOf([]);
-        }
-        const response: waves.data.assets.AssetInfo[] = [];
-        assetsGrpcService.search(
-          waves.data.assets.SearchAssetRequest.create({
-            query: query,
-          })
-        );
-
-        assetsGrpcService.on('data', data => {
-          response.push(data);
-          console.log('data', response);
-        });
-
-        return task(() => {
-          assetsGrpcService.on('end', () => {
-            console.log('done');
-            console.log(response);
+    search: request =>
+      createResolver<
+        AssetsSearchRequest,
+        AssetsSearchRequest,
+        SearchedItems<waves.data.assets.AssetInfo>,
+        SearchedItems<waves.data.assets.AssetInfo>
+      >(
+        ok,
+        request => {
+          const query = request.search || request.ticker;
+          if (typeof query === 'undefined') {
+            return taskOf({ isLastPage: true, items: [] });
+          }
+          const pagination = waves.data.Pagination.create({
+            limit: request.limit,
+            after: request.after ? base58Decode(request.after) : undefined,
           });
-          response.forEach((assetInfoData, index) => {
-            const assetInfo = waves.data.assets.AssetInfo.create(assetInfoData);
-            cache.set(
-              base58Encode(Buffer.from(assetInfoData.assetId)),
-              assetInfo
-            );
-          });
-
-          return response;
-        });
-      },
-      validateResult: ok,
-      transformResult: transformDbResponse as any,
-      emitEvent,
-    }),
+          return assetsGrpcService
+            .searchAsset(
+              waves.data.assets.SearchAssetRequest.create({
+                query: query,
+                pagination,
+              })
+            )
+            .map(items => ({
+              isLastPage: items.isLastPage,
+              lastCursor: items.lastCursor,
+              items: items.items.map(assetInfoData =>
+                waves.data.assets.AssetInfo.create(assetInfoData)
+              ),
+            }))
+            .mapRejected(taskMapRejectedHandler(REPO_NAME['SEARCH'], request));
+        },
+        ok,
+        identity,
+        emitEvent,
+        request
+      ),
   };
 };

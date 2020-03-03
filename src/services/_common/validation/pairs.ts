@@ -10,6 +10,7 @@ import { AssetIdsPair } from '../../../types';
 
 import { AssetsService } from '../../assets';
 import { PairOrderingService } from '../../PairOrderingService';
+import { DEFAULT_DECIMALS_FORMAT } from '..';
 
 export const validatePairs = (
   assetsMget: AssetsService['mget'],
@@ -39,7 +40,10 @@ export const validatePairs = (
   });
   const assetIds = Array.from(assetIdsSet);
 
-  return assetsMget({ ids: assetIds }).chain(assets => {
+  return assetsMget({
+    ids: assetIds,
+    decimalsFormat: DEFAULT_DECIMALS_FORMAT,
+  }).chain(assets => {
     const nonExistingIds = zip(assetIds, assets)
       .filter(x =>
         x[1].matchWith({

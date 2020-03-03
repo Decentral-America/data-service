@@ -9,12 +9,13 @@ import createAssetsService, { AssetsService } from './assets';
 import createAssetsRepo, {
   createCache as createAssetsCache,
 } from './assets/repo';
-import * as assetsGrpcService from './assets/repo/impl';
+import createAssetsGrpcService from './assets/repo/impl';
 
 import createCandlesService, { CandlesService } from './candles';
 import createCandlesRepo from './candles/repo';
 import createPairsService, { PairsService } from './pairs';
 import createPairsRepo, { createCache as createPairsCache } from './pairs/repo';
+
 import createAllTxsService, { AllTxsService } from './transactions/all';
 import createAllTxsRepo from './transactions/all/repo';
 import createAliasTxsService, { AliasTxsService } from './transactions/alias';
@@ -35,7 +36,9 @@ import createInvokeScriptTxsService, {
   InvokeScriptTxsService,
 } from './transactions/invokeScript';
 import createInvokeScriptTxsRepo from './transactions/invokeScript/repo';
+import { create as createInvokeScriptTxsCache } from './transactions/invokeScript/repo/cache';
 import createIssueTxsService, { IssueTxsService } from './transactions/issue';
+import { create as createIssueTxsCache } from './transactions/issue/repo/cache';
 import createIssueTxsRepo from './transactions/issue/repo';
 import createLeaseTxsService, { LeaseTxsService } from './transactions/lease';
 import createLeaseTxsRepo from './transactions/lease/repo';
@@ -159,6 +162,8 @@ export default ({
       const ratesCache = new RateCacheImpl(200000, 60000); // 1 minute
       const pairsCache = createPairsCache(1000, 5000);
       const assetsCache = createAssetsCache(10000, 60000); // 1 minute
+      const invokeScriptTxsCache = createInvokeScriptTxsCache(1000000, 0); // forever
+      const issueTxsCache = createIssueTxsCache(100000, 0); // forever
 
       const commonDeps = {
         drivers: {
@@ -176,12 +181,26 @@ export default ({
       const aliasesRepo = createAliasesRepo(commonDeps);
       const aliases = createAliasesService(aliasesRepo);
 
+      const invokeScriptTxsRepo = createInvokeScriptTxsRepo({
+        ...commonDeps,
+        cache: invokeScriptTxsCache,
+      });
+      const invokeScriptTxs = createInvokeScriptTxsService(invokeScriptTxsRepo);
+      const issueTxsRepo = createIssueTxsRepo({
+        ...commonDeps,
+        cache: issueTxsCache,
+      });
+      const issueTxs = createIssueTxsService(issueTxsRepo);
+
       const assetsRepo = createAssetsRepo({
         ...commonDeps,
         cache: assetsCache,
-        assetsGrpcService: assetsGrpcService,
+        assetsGrpcService: createAssetsGrpcService(options.grpc),
       });
-      const assets = createAssetsService(assetsRepo);
+      const assets = createAssetsService(assetsRepo, {
+        issue: issueTxs,
+        invokeScript: invokeScriptTxs,
+      });
 
       const aliasTxsRepo = createAliasTxsRepo(commonDeps);
       const aliasTxs = createAliasTxsService(aliasTxsRepo);
@@ -193,10 +212,6 @@ export default ({
       const exchangeTxs = createExchangeTxsService(exchangeTxsRepo);
       const genesisTxsRepo = createGenesisTxsRepo(commonDeps);
       const genesisTxs = createGenesisTxsService(genesisTxsRepo);
-      const invokeScriptTxsRepo = createInvokeScriptTxsRepo(commonDeps);
-      const invokeScriptTxs = createInvokeScriptTxsService(invokeScriptTxsRepo);
-      const issueTxsRepo = createIssueTxsRepo(commonDeps);
-      const issueTxs = createIssueTxsService(issueTxsRepo);
       const leaseTxsRepo = createLeaseTxsRepo(commonDeps);
       const leaseTxs = createLeaseTxsService(leaseTxsRepo);
       const leaseCancelTxsRepo = createLeaseCancelTxsRepo(commonDeps);
@@ -216,7 +231,7 @@ export default ({
       const sponsorshipTxsRepo = createSponsorshipTxsRepo(commonDeps);
       const sponsorshipTxs = createSponsorshipTxsService(sponsorshipTxsRepo);
       const transferTxsRepo = createTransferTxsRepo(commonDeps);
-      const transferTxs = createTransferTxsService(transferTxsRepo);
+      const transferTxs = createTransferTxsService(transferTxsRepo, assets);
 
       const rates = createRateService({
         ...commonDeps,

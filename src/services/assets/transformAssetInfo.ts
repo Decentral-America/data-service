@@ -1,8 +1,12 @@
 import { Asset, BigNumber } from '@waves/data-entities';
 import { encode as base58Encode } from 'bs58';
-import { waves } from './grpc';
+import { waves } from './repo/grpc/grpc';
+import { TransactionInfo } from '../../types';
 
-export const transformDbResponse = (raw: waves.data.assets.AssetInfo): Asset =>
+export const transformAssetInfo = (
+  raw: waves.data.assets.AssetInfo,
+  tx: TransactionInfo
+): Asset =>
   new Asset({
     id: base58Encode(Buffer.from(raw.assetId)),
     name: raw.name,
@@ -12,7 +16,7 @@ export const transformDbResponse = (raw: waves.data.assets.AssetInfo): Asset =>
     minSponsoredFee: parseInt(raw.sponsorship.toString()),
     reissuable: raw.reissuable,
     hasScript: raw.script.length > 0,
-    height: 1,
-    timestamp: new Date(),
-    sender: '',
+    height: (tx as any).height,
+    timestamp: tx.timestamp,
+    sender: (tx as any).sender,
   });

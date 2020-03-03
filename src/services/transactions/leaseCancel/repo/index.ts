@@ -2,7 +2,6 @@ import { propEq } from 'ramda';
 
 import { withStatementTimeout } from '../../../../db/driver';
 import { CommonRepoDependencies } from '../../..';
-import { TransactionInfo } from '../../../../types';
 import { getByIdPreset } from '../../../_common/presets/pg/getById';
 import { mgetByIdsPreset } from '../../../_common/presets/pg/mgetByIds';
 import { searchPreset } from '../../../_common/presets/pg/search';
@@ -13,9 +12,10 @@ import { result as resultSchema } from './schema';
 import * as sql from './sql';
 import * as transformTxInfo from './transformTxInfo';
 import {
-  LeaseCancelTxsRepo,
-  LeaseCancelTxsSearchRequest,
   LeaseCancelTxDbResponse,
+  LeaseCancelTransactionInfo,
+  LeaseCancelTxsSearchRequest,
+  LeaseCancelTxsRepo,
 } from './types';
 
 export default ({
@@ -49,7 +49,7 @@ export default ({
       Cursor,
       LeaseCancelTxsSearchRequest,
       LeaseCancelTxDbResponse,
-      TransactionInfo
+      LeaseCancelTransactionInfo
     >({
       name: 'transactions.leaseCancel.search',
       sql: sql.search,
