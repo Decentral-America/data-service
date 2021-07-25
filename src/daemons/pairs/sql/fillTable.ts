@@ -32,7 +32,7 @@ const selectPairsCTE = pg
         'sum(e.amount * 10 ^(-a_dec.decimals) * e.price * 10 ^(-8 - p_dec.decimals + a_dec.decimals))/ sum(e.amount * 10 ^(-a_dec.decimals))'
       ),
       volume_waves: pg.raw(
-        "case when amount_asset = 'WAVES' then sum(e.amount * 10 ^(-a_dec.decimals)) when price_asset = 'WAVES' then sum(e.amount * 10 ^(-a_dec.decimals) * e.price * 10 ^(-8 - p_dec.decimals + a_dec.decimals)) end"
+        "case when amount_asset = 'DCC' then sum(e.amount * 10 ^(-a_dec.decimals)) when price_asset = 'DCC' then sum(e.amount * 10 ^(-a_dec.decimals) * e.price * 10 ^(-8 - p_dec.decimals + a_dec.decimals)) end"
       ),
       high: pg.raw('max(e.price * 10 ^(-8 - p_dec.decimals + a_dec.decimals))'),
       low: pg.raw('min(e.price * 10 ^(-8 - p_dec.decimals + a_dec.decimals))'),
@@ -64,12 +64,12 @@ const selectPairsCTE = pg
     'p.matcher'
   )
   .leftJoin('pairs_cte as p1', function() {
-    this.on(pg.raw("p1.amount_asset_id='WAVES'"))
+    this.on(pg.raw("p1.amount_asset_id='DCC'"))
       .andOn('p1.price_asset_id', 'p.price_asset_id')
       .andOn('p1.matcher', 'p.matcher');
   })
   .leftJoin('pairs_cte as p2', function() {
-    this.on(pg.raw("p2.price_asset_id='WAVES'"))
+    this.on(pg.raw("p2.price_asset_id='DCC'"))
       .andOn('p2.amount_asset_id', 'p.price_asset_id')
       .andOn('p2.matcher', 'p.matcher');
   });
