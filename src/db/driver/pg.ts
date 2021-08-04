@@ -50,6 +50,7 @@ export const createPgDriver = (
     user: options.postgresUser,
     password: options.postgresPassword,
     max: options.postgresPoolSize, // max connection pool size
+    ssl: true,
     statement_timeout: defaultTo(false, options.postgresStatementTimeout),
   });
 
